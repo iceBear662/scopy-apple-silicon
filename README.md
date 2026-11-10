@@ -1,23 +1,31 @@
 # Scopy 1.5 for Apple Silicon
 
-English | [简体中文](README.zh-CN.md)
+简体中文 | [English](README.en.md)
 
-An Apple Silicon native port of Scopy 1.5 for macOS users working with the ADALM2000, based on Analog Devices' [Scopy v1.5.0-rc1](https://github.com/analogdevicesinc/scopy/tree/v1.5.0-rc1). This is an unofficial community port and is not an official Analog Devices release.
+Scopy 1.5 的 Apple Silicon 原生移植版，基于 Analog Devices 的 [Scopy v1.5.0-rc1](https://github.com/analogdevicesinc/scopy/tree/v1.5.0-rc1)，适用于使用 ADALM2000 的 macOS 用户。本项目是非官方社区移植，与 Analog Devices 官方发布版本无关。
 
-## Features
+## 特性
 
-- Native Apple Silicon (arm64) support.
-- Measurement and analysis with the ADALM2000.
-- Improved embedded Python path isolation and device reconnection stability.
-- Corrected network analyzer script axes.
+- 原生支持 Apple Silicon（arm64）。
+- 支持使用 ADALM2000 进行测量与分析。
+- 改进内嵌 Python 的路径隔离与设备重连稳定性。
+- 修正网络分析仪脚本的坐标轴问题。
 
-## Compatibility
+## 兼容性
 
-An actual experiment was completed successfully on an **Apple M6 device running macOS 27.0.1**. The build targets macOS 11 and later; compatibility with other devices and macOS versions has not been confirmed.
+已在搭载 **Apple M6 芯片、运行 macOS 27.0.1** 的设备上完成一次实际实验，测试通过。构建目标为 macOS 11 及以上；其他设备和系统版本的兼容性尚未确认。
 
-## Build from source
+## 下载安装
 
-An Apple Silicon Mac, Xcode and its command-line tools, Git, Python 3, and [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) are required. With `micromamba` on PATH, run the following from the repository root:
+1. 在 [Releases](../../releases/latest) 下载 `Scopy-v1.5.0-rc1-macOS-arm64.zip`。
+2. 双击解压，将 `Scopy-arm64.app` 拖入“应用程序”文件夹。
+3. 在“应用程序”中打开 Scopy，连接 ADALM2000 后使用。
+
+应用使用临时签名，未经 Apple 公证；首次打开时 macOS 可能提示无法验证开发者。请在确认下载来源后，根据 macOS 的提示在“系统设置 → 隐私与安全性”中允许打开。
+
+## 从源码构建
+
+需要 Apple Silicon Mac、Xcode 及命令行工具、Git、Python 3 和 [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html)。确保终端可以找到 `micromamba`，然后在仓库根目录运行：
 
 ```sh
 python3 native/bootstrap.py
@@ -28,16 +36,16 @@ python3 native/package.py
 python3 native/verify.py
 ```
 
-The build downloads third-party sources and packages; the bootstrap script refuses to overwrite existing source directories. The resulting app is locally ad-hoc signed and has not been notarized by Apple. No application archive is included in this repository: local paths in the build output and third-party redistribution requirements still need review.
+构建过程会下载第三方源码和依赖包；依赖获取脚本不会覆盖已存在的源码目录。生成的应用使用本地临时签名，未经 Apple 公证。发布包含有构建路径，第三方组件的再分发条件仍需进一步核对。
 
-## Project structure
+## 项目结构
 
-- `source/`: modified Scopy source and iio-emu.
-- `native/`: Apple Silicon build scripts, dependency pins and patches.
-- `third_party/`: third-party dependency provenance and license materials.
+- `source/`：修改后的 Scopy 源码及 iio-emu。
+- `native/`：Apple Silicon 构建脚本、依赖版本和补丁。
+- `third_party/`：第三方依赖来源及许可资料。
 
-## Credits and licenses
+## 致谢与许可证
 
-Thanks to the contributors to [Analog Devices Scopy](https://github.com/analogdevicesinc/scopy) and its dependencies. This port is based on upstream commit `438f13835ef65c8ff56a511532817575a04d7fa9`.
+感谢 [Analog Devices Scopy](https://github.com/analogdevicesinc/scopy) 及其依赖项目的贡献者。此移植基于上游提交 `438f13835ef65c8ff56a511532817575a04d7fa9`。
 
-Scopy is licensed under [GPL-3.0-or-later](LICENSE). iio-emu is subject to additional [ADI license terms](source/iio-emu/LICENSE_ADIBSD); see [third_party/NOTICES.md](third_party/NOTICES.md) for third-party provenance and license information.
+Scopy 使用 [GPL-3.0-or-later](LICENSE) 许可证。iio-emu 适用额外的 [ADI 许可条款](source/iio-emu/LICENSE_ADIBSD)；第三方依赖的来源和许可信息见 [third_party/NOTICES.md](third_party/NOTICES.md)。
