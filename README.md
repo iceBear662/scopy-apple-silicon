@@ -1,5 +1,7 @@
 # Scopy 1.5 for Apple Silicon (unofficial)
 
+English | [简体中文](README.zh-CN.md)
+
 Apple Silicon port based on [Analog Devices Scopy v1.5.0-rc1](https://github.com/analogdevicesinc/scopy/tree/v1.5.0-rc1), commit `438f13835ef65c8ff56a511532817575a04d7fa9`. This is an unofficial community modification. Scopy is licensed under GPL-3.0-or-later; retain the original copyright and license notices.
 
 Changes include arm64 build support, embedded Python path isolation, reconnect stability and network analyzer script-axis corrections. `source/` includes the modified Scopy source and its iio-emu submodule. `native/` records build scripts, dependency pins and patches. The iio-emu component has additional ADI license terms; see `source/iio-emu/LICENSE_ADIBSD`.
