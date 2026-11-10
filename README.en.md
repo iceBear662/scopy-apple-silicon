@@ -11,6 +11,10 @@ An Apple Silicon native port of Scopy 1.5 for macOS users working with the ADALM
 - Improved embedded Python path isolation and device reconnection stability.
 - Corrected network analyzer script axes.
 
+## How it works
+
+This port adapts Scopy 1.5's source, build configuration and dependencies for macOS, then compiles them natively for Apple Silicon (arm64). The required dynamic libraries, Python runtime and resources are bundled into a standalone macOS application.
+
 ## Compatibility
 
 An actual experiment was completed successfully on an **Apple M6 device running macOS 27.0.1**. The build targets macOS 11 and later; compatibility with other devices and macOS versions has not been confirmed.
