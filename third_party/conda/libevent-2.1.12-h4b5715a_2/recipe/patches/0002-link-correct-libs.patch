@@ -1,0 +1,22 @@
+From 68ece75d3ea49657c2ea09caefe331e4924beeb3 Mon Sep 17 00:00:00 2001
+From: "Uwe L. Korn" <uwe.korn@quantco.com>
+Date: Wed, 9 Sep 2020 15:12:12 +0200
+Subject: [PATCH 2/3] link correct libs
+
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index d00e063a..76e3ee16 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -345,7 +345,7 @@ fi
+ AM_CONDITIONAL(BUILD_WIN32, test x$bwin32 = xtrue)
+ AM_CONDITIONAL(BUILD_CYGWIN, test x$cygwin = xtrue)
+ AM_CONDITIONAL(BUILD_MIDIPIX, test x$midipix = xtrue)
+-AM_CONDITIONAL(BUILD_WITH_NO_UNDEFINED, test x$bwin32 = xtrue || test x$cygwin = xtrue || test x$midipix = xtrue)
++AM_CONDITIONAL(BUILD_WITH_NO_UNDEFINED, test 1 = 1)
+ 
+ if test x$bwin32 = xtrue; then
+   AC_HAVE_LIBRARY([ws2_32])

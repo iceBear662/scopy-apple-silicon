@@ -1,0 +1,68 @@
+{% set version = "26.2.2" %}
+
+package:
+  name: pip
+  version: {{ version }}
+
+source:
+  url: https://files.pythonhosted.org/packages/source/p/pip/pip-{{ version }}.tar.gz
+  sha256: 3a8e5c800492787f33a4114ef54444546c340df428974ebba17e0fd47e11af2f
+  patches:
+    # use the CA bundle from conda-forge's ca-certificates instead of the vendored one
+    - use-conda-ca-certificates.patch
+
+build:
+  noarch: python
+  number: 2
+  disable_pip: true
+  entry_points:
+    - pip = pip._internal.cli.main:main
+    - pip3 = pip._internal.cli.main:main
+
+requirements:
+  host:
+    - python >=3.13.0a0                    # [not with_setuptools_wheel]
+    - python >={{ python_min }},<3.13.0a0  # [with_setuptools_wheel]
+    - flit-core
+    - setuptools
+    - wheel
+  run:
+    - python >=3.13.0a0                    # [not with_setuptools_wheel]
+    - python >={{ python_min }},<3.13.0a0  # [with_setuptools_wheel]
+    # at least as new as the vendored certifi bundle that was removed
+    - ca-certificates >=2026.10.19
+    - setuptools                           # [with_setuptools_wheel]
+    - wheel                                # [with_setuptools_wheel]
+
+test:
+  requires:
+    - python {{ python_min }}              # [with_setuptools_wheel]
+    - python 3.13.0                        # [not with_setuptools_wheel]
+  commands:
+    - pip -h
+    - python -c "import os; from pip._vendor import certifi; assert os.path.isfile(certifi.where()), certifi.where()"
+    # the CA bundle must also be found from inside a venv
+    - python -m venv --system-site-packages --without-pip test-venv
+    - test-venv/bin/python -c "import os, sys; from pip._vendor import certifi; assert sys.prefix != sys.base_prefix; assert os.path.isfile(certifi.where()), certifi.where()"  # [unix]
+    - test-venv\Scripts\python -c "import os, sys; from pip._vendor import certifi; assert sys.prefix != sys.base_prefix; assert os.path.isfile(certifi.where()), certifi.where()"  # [win]
+    - pip list
+  imports:
+    - pip
+
+about:
+  home: https://pip.pypa.io/en/stable/
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE.txt
+  summary: PyPA recommended tool for installing Python packages
+  doc_url: https://pip.pypa.io/en/stable/
+  dev_url: https://github.com/pypa/pip
+
+extra:
+  recipe-maintainers:
+    - jakirkham
+    - msarahan
+    - pelson
+    - ocefpaf
+    - mingwandroid
+    - isuruf

@@ -1,0 +1,13 @@
+native/env/
+native/mamba/
+native/prefix/
+native/build/
+native/src/
+native/test-work/
+native/test-results/
+native/tmp/
+native/tools/
+native/logs/
+native-*.log
+outputs/
+.DS_Store

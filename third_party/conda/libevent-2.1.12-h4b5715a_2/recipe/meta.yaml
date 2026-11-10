@@ -1,0 +1,132 @@
+# This file created by conda-build 26.7.1
+# meta.yaml template originally from:
+# /Users/runner/work/1/s/recipe, last modified Tue Sep  8 12:21:22 2026
+# ------------------------------------------------
+
+package:
+  name: libevent
+  version: 2.1.12
+source:
+  url: https://github.com/libevent/libevent/archive/refs/tags/release-2.1.12-stable.tar.gz
+  sha256: 7180a979aaa7000e1264da484f712d403fcf7679b1e9212c4e3d09f5c93efc24
+  patches:
+    - patches/0001-Fix-destination-for-DLLs-lib-bin.patch
+    - patches/0002-link-correct-libs.patch
+build:
+  number: '2'
+  run_exports:
+    - libevent >=2.1.12,<2.1.13.0a0
+  string: h4b5715a_2
+requirements:
+  build:
+    - bzip2 1.0.8 h4e30115_10
+    - c-ares 1.34.8 h74c22ad_2
+    - ca-certificates 2026.7.22 hbd8a1cb_0
+    - cctools_impl_osx-arm64 1030.6.3 llvm21_1_h2e2604f_6
+    - cctools_osx-arm64 1030.6.3 llvm21_1_h8e84c17_6
+    - clang-21 21.1.8 default_h4399b93_6
+    - clang_impl_osx-arm64 21.1.8 default_hc11f16d_6
+    - clang_osx-arm64 21.1.8 h15b5089_34
+    - cmake 3.31.8 h54ad630_0
+    - compiler-rt 21.1.8 hce30654_2
+    - compiler-rt21 21.1.8 hdb3d66b_2
+    - compiler-rt21_osx-arm64 21.1.8 hb8825d9_2
+    - compiler-rt_osx-arm64 21.1.8 hce30654_2
+    - icu 78.3 py310h579977c_2
+    - krb5 1.22.2 h34f8a20_2
+    - ld64_osx-arm64 956.6 llvm21_1_h1a10cc4_6
+    - libclang-cpp21.1 21.1.8 default_h4399b93_6
+    - libcompiler-rt 21.1.8 hdb3d66b_2
+    - libcurl 8.22.0 h6651222_0
+    - libcxx 23.1.0 h55c6f16_0
+    - libedit 3.1.20250104 pl5321h26f1114_1
+    - libev 4.33 h1a92334_3
+    - libexpat 2.8.1 hf6b4638_1
+    - libiconv 1.18 he4c29f2_3
+    - libllvm21 21.1.8 h759d1ac_1
+    - liblzma 5.8.3 h8088a28_1
+    - libnghttp2 1.68.1 h435687b_1
+    - libpsl 0.23.1 hdb0c161_1
+    - libsigtool 0.1.3 h98dc951_1
+    - libssh2 1.11.1 hbf2880b_1
+    - libuv 1.52.1 h1a92334_1
+    - libxml2 2.15.4 h550178d_0
+    - libxml2-16 2.15.4 heb56d2d_0
+    - libzlib 1.3.2 h8088a28_3
+    - llvm-tools 21.1.8 hdb3d66b_1
+    - llvm-tools-21 21.1.8 h79441dc_1
+    - macosx_deployment_target_osx-arm64 11.0 h214bdd9_7
+    - ncurses 6.6 he64c551_1
+    - ninja 1.13.2 h3feff0a_1
+    - openssl 3.6.4 h55eecbc_0
+    - rhash 1.4.6 h84a0fba_2
+    - sdkroot_env_osx-arm64 26.0 ha3f98da_7
+    - sigtool-codesign 0.1.3 h98dc951_1
+    - tapi 1600.0.11.8 hb561403_3
+    - zstd 1.5.7 hf451053_7
+  host:
+    - ca-certificates 2026.7.22 hbd8a1cb_0
+    - openssl 3.5.8 h55eecbc_0
+  run:
+    - __osx >=11.0
+    - openssl >=3.5.8,<4.0a0
+test:
+  requires:
+    - clangxx_osx-arm64 21.*
+    - cmake
+    - ninja
+    - pkg-config
+    - python *
+  source_files:
+    - event_rpcgen.py
+    - test/
+  files:
+    - cmake_test/
+  commands:
+    - test -d "${PREFIX}/include/event2"
+    - test -f "${PREFIX}/lib/libevent.dylib"
+    - test ! -f "${PREFIX}/lib/libevent.a"
+    - pkg-config --print-errors --exact-version "2.1.12" libevent
+    - test -f "${PREFIX}/lib/libevent_core.dylib"
+    - test ! -f "${PREFIX}/lib/libevent_core.a"
+    - pkg-config --print-errors --exact-version "2.1.12" libevent_core
+    - test -f "${PREFIX}/lib/libevent_extra.dylib"
+    - test ! -f "${PREFIX}/lib/libevent_extra.a"
+    - pkg-config --print-errors --exact-version "2.1.12" libevent_extra
+    - test -f "${PREFIX}/lib/libevent_openssl.dylib"
+    - test ! -f "${PREFIX}/lib/libevent_openssl.a"
+    - pkg-config --print-errors --exact-version "2.1.12" libevent_openssl
+    - test -f "${PREFIX}/lib/libevent_pthreads.dylib"
+    - test ! -f "${PREFIX}/lib/libevent_pthreads.a"
+    - pkg-config --print-errors --exact-version "2.1.12" libevent_pthreads
+    - python event_rpcgen.py test/regress.rpc test/regress.gen.h test/regress.gen.c
+    - cd cmake_test
+    - cmake -GNinja $CMAKE_ARGS .
+about:
+  home: http://libevent.org/
+  license: BSD-3-Clause
+  license_family: BSD
+  license_file: LICENSE
+  description: 'The libevent API provides a mechanism to execute a callback function
+    when
+
+    a specific event occurs on a file descriptor or after a timeout has been
+
+    reached. Furthermore, libevent also supports callbacks due to signals or
+
+    regular timeouts.
+
+    '
+  summary: An event notification library.
+  doc_url: http://www.wangafu.net/~nickm/libevent-1.4/doxygen/html/
+  dev_url: https://github.com/libevent/libevent
+extra:
+  recipe-maintainers:
+    - h-vetinari
+    - jakirkham
+    - xhochy
+  final: true
+  copy_test_source_files: true
+  flow_run_id: azure_20260908.1.1
+  remote_url: https://github.com/conda-forge/libevent-feedstock
+  sha: 1cba36a9114e5ece2642df8a1a2b473365c39afd

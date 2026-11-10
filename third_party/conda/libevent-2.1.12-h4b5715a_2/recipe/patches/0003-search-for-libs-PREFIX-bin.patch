@@ -1,0 +1,22 @@
+From 2b3f92123bc6b1770a1dda10aaa76cb72aa96e3e Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Sat, 3 Jun 2023 02:51:10 +1100
+Subject: [PATCH 3/3] search for libs $PREFIX/bin
+
+---
+ cmake/LibeventConfig.cmake.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/LibeventConfig.cmake.in b/cmake/LibeventConfig.cmake.in
+index 7b808c32..81f5e7d2 100644
+--- a/cmake/LibeventConfig.cmake.in
++++ b/cmake/LibeventConfig.cmake.in
+@@ -130,7 +130,7 @@ if(CONFIG_FOR_INSTALL_TREE)
+         unset(_event_lib CACHE)
+         find_library(_event_lib
+                     NAMES "event_${_comp}"
+-                    PATHS "${_INSTALL_PREFIX}/lib"
++                    PATHS "${_INSTALL_PREFIX}/bin"
+                     NO_DEFAULT_PATH)
+         if(_event_lib)
+             list(APPEND LIBEVENT_LIBRARIES "libevent::${_comp}")

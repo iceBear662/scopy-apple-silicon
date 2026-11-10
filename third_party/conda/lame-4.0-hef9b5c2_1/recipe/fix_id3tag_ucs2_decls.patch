@@ -1,0 +1,23 @@
+--- a/include/lame.h
++++ b/include/lame.h
+@@ -1280,9 +1280,9 @@
+ /* experimental */
+ int CDECL id3tag_set_comment_latin1(lame_t gfp, char const *lang, char const *desc, char const *text);
+ 
+-#if DEPRECATED_OR_OBSOLETE_CODE_REMOVED
+-#else
+-/* experimental */
++/* experimental -- keep these declared even when DEPRECATED_OR_OBSOLETE_CODE_REMOVED
++ * is set; the frontend (and the exported libmp3lame symbols) still use them,
++ * matching the unguarded utf16/utf8 variants below. */
+ int CDECL id3tag_set_textinfo_ucs2(lame_t gfp, char const *id, unsigned short const *text);
+ 
+ /* experimental */
+@@ -1291,7 +1291,6 @@
+ 
+ /* experimental */
+ int CDECL id3tag_set_fieldvalue_ucs2(lame_t gfp, const unsigned short *fieldvalue);
+-#endif
+ 
+ /* experimental */
+ int CDECL id3tag_set_fieldvalue_utf16(lame_t gfp, const unsigned short *fieldvalue);

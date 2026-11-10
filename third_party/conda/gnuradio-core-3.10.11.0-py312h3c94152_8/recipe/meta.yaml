@@ -1,0 +1,205 @@
+# This file created by conda-build 25.1.2
+# ------------------------------------------------
+
+package:
+  name: gnuradio-core
+  version: 3.10.11.0
+source:
+  patches:
+    - 0001-cmake-Install-python-wrapper-exe-for-scripts-on-Wind.patch
+    - 0002-grc-Remove-global_blocks_path-preference-and-use-pre.patch
+    - 0003-filter-python-Drop-unused-args-argument-overriden-by.patch
+    - 0004-cmake-runtime-Manually-set-the-pybind11-internal-bui.patch
+  sha256: 9ca658e6c4af9cfe144770757b34ab0edd23f6dcfaa6c5c46a7546233e5ecd29
+  url: https://github.com/gnuradio/gnuradio/archive/refs/tags/v3.10.11.0.tar.gz
+build:
+  entry_points: null
+  number: 8
+  run_exports:
+    - gnuradio-core >=3.10.11.0,<3.10.12.0a0
+    - gnuradio-pmt >=3.10.11.0,<3.10.12.0a0
+  skip_compile_pyc:
+    - '*/templates/*.py'
+  string: py312h3c94152_8
+requirements:
+  build:
+    - bzip2 1.0.8 hfdf4475_7
+    - c-ares 1.34.4 hf13058a_0
+    - ca-certificates 2025.1.31 h8857fd0_0
+    - cctools_osx-64 1010.6 hd19c6af_3
+    - cctools_osx-arm64 1010.6 hd9414f1_3
+    - clang 18.1.8 default_h576c50e_7
+    - clang-18 18.1.8 default_h3571c67_7
+    - clang_impl_osx-arm64 18.1.8 hadf8e89_23
+    - clang_osx-arm64 18.1.8 h1728699_23
+    - clangxx 18.1.8 default_heb2e8d1_7
+    - clangxx_impl_osx-arm64 18.1.8 hd2305f4_23
+    - clangxx_osx-arm64 18.1.8 h1728699_23
+    - cmake 3.31.5 h477996e_0
+    - compiler-rt 18.1.8 h1020d70_1
+    - compiler-rt_osx-64 18.1.8 hf2b8a54_1
+    - krb5 1.21.3 h37d8d59_0
+    - ld64_osx-64 951.9 h33512f0_3
+    - ld64_osx-arm64 951.9 h0ae773b_3
+    - libclang-cpp18.1 18.1.8 default_h3571c67_7
+    - libcurl 8.11.1 h5dec5d8_0
+    - libcxx 19.1.7 hf95d169_0
+    - libcxx-devel 18.1.8 h7c275be_7
+    - libedit 3.1.20250104 pl5321ha958ccf_0
+    - libev 4.33 h10d778d_2
+    - libexpat 2.6.4 h240833e_0
+    - libffi 3.4.2 h0d85af4_5
+    - libiconv 1.17 hd75f5a5_2
+    - libllvm18 18.1.8 hc29ff6c_3
+    - liblzma 5.6.4 hd471939_0
+    - libnghttp2 1.64.0 hc7306c3_0
+    - libsqlite 3.48.0 hdb6dae5_1
+    - libssh2 1.11.1 h3dc7d44_0
+    - libuv 1.50.0 h4cb831e_0
+    - libxml2 2.13.5 he8ee3e7_1
+    - libzlib 1.3.1 hd23fc13_2
+    - llvm-tools 18.1.8 hc29ff6c_3
+    - llvm-tools-18 18.1.8 hc29ff6c_3
+    - macosx_deployment_target_osx-arm64 11.0 h6553868_2
+    - ncurses 6.5 h0622a9a_3
+    - openssl 3.4.0 hc426f3f_1
+    - python 3.12.8 h9ccd52b_1_cpython
+    - readline 8.2 h9e318b2_1
+    - rhash 1.4.5 ha44c9a9_0
+    - sigtool 0.1.3 h88f4db0_0
+    - tapi 1300.6.5 h390ca13_0
+    - tk 8.6.13 h1abcd95_1
+    - tzdata 2025a h78e105d_0
+    - zstd 1.5.6 h915ae27_0
+  host:
+    - bzip2 1.0.8 h99b78c6_7
+    - ca-certificates 2025.1.31 hf0a4a13_0
+    - codec2 1.2.0 hd74edd7_2
+    - fftw 3.3.10 nompi_h6637ab6_110
+    - fmt 11.0.2 h420ef59_0
+    - gettext 0.22.5 h8414b35_3
+    - gettext-tools 0.22.5 h8414b35_3
+    - gmp 6.3.0 h7bae524_2
+    - gnuradio-pmt 3.10.11.0 py312hf3ff670_8
+    - gsl 2.7 h6e638da_0
+    - gstreamer-orc 0.4.40 hd74edd7_0
+    - icu 75.1 hfee45f7_0
+    - lame 3.100 h1a8c8d9_1003
+    - libasprintf 0.22.5 h8414b35_3
+    - libasprintf-devel 0.22.5 h8414b35_3
+    - libblas 3.9.0 28_h10e41b3_openblas
+    - libboost 1.86.0 hc9fb7c5_3
+    - libboost-devel 1.86.0 hf450f58_3
+    - libboost-headers 1.86.0 hce30654_3
+    - libcblas 3.9.0 28_hb3479ef_openblas
+    - libcodec2 1.2.0 hd74edd7_2
+    - libcxx 19.1.7 ha82da77_0
+    - libevent 2.1.12 h2757513_1
+    - libexpat 2.6.4 h286801f_0
+    - libffi 3.4.2 h3422bc3_5
+    - libflac 1.4.3 hb765f3a_0
+    - libgettextpo 0.22.5 h8414b35_3
+    - libgettextpo-devel 0.22.5 h8414b35_3
+    - libgfortran 5.0.0 13_2_0_hd922786_3
+    - libgfortran5 13.2.0 hf226fd6_3
+    - libiconv 1.17 h0d3ecfb_2
+    - libintl 0.22.5 h8414b35_3
+    - libintl-devel 0.22.5 h8414b35_3
+    - liblapack 3.9.0 28_hc9a63f6_openblas
+    - liblzma 5.6.4 h39f12f2_0
+    - libogg 1.3.5 h99b78c6_0
+    - libopenblas 0.3.28 openmp_hf332438_1
+    - libopus 1.3.1 h27ca646_1
+    - libsndfile 1.2.2 h9739721_1
+    - libsqlite 3.48.0 h3f77e49_1
+    - libthrift 0.21.0 h64651cc_0
+    - libvorbis 1.3.7 h9f76cd9_0
+    - libzlib 1.3.1 h8359307_2
+    - llvm-openmp 19.1.7 hdb05f8b_0
+    - mpg123 1.32.9 hf642e45_0
+    - ncurses 6.5 h5e97a16_3
+    - numpy 2.0.2 py312h94ee1e1_1
+    - openssl 3.4.0 h81ee809_1
+    - packaging 24.2 pyhd8ed1ab_2
+    - portaudio 19.7.0 h5833ebf_0
+    - pybind11 2.13.6 pyh1ec8472_2
+    - pybind11-abi 4 hd8ed1ab_3
+    - pybind11-global 2.13.6 pyh415d2e4_2
+    - python 3.12.8 hc22306f_1_cpython
+    - python_abi 3.12 5_cp312
+    - readline 8.2 h92ec313_1
+    - six 1.17.0 pyhd8ed1ab_0
+    - spdlog 1.15.1 hed1c2b2_0
+    - thrift 0.20.0 py312hde4cb15_1
+    - tk 8.6.13 h5083fa2_1
+    - tzdata 2025a h78e105d_0
+    - volk 3.2.0 h71a8b11_0
+    - zstd 1.5.6 hb46c0d2_0
+  run:
+    - __osx >=11.0
+    - click
+    - fftw >=3.3.10,<4.0a0
+    - fmt >=11.0.2,<12.0a0
+    - gmp >=6.3.0,<7.0a0
+    - gnuradio-pmt 3.10.11.0 py312hf3ff670_8
+    - gsl >=2.7,<2.8.0a0
+    - libboost >=1.86.0,<1.87.0a0
+    - libcodec2 >=1.2.0,<1.3.0a0
+    - libcxx >=18
+    - libsndfile >=1.2.2,<1.3.0a0
+    - libthrift >=0.21.0,<0.21.1.0a0
+    - mako
+    - numpy >=1.19,<3
+    - packaging
+    - portaudio >=19.7.0,<19.8.0a0
+    - portaudio >=19.7.0,<20.0a0
+    - pybind11-abi ==4
+    - python >=3.12,<3.13.0a0
+    - python_abi 3.12.* *_cp312
+    - pyyaml
+    - setuptools
+    - spdlog >=1.15.1,<1.16.0a0
+    - volk >=3.2.0,<3.3.0a0
+test:
+  commands:
+    - gnuradio-config-info -v --prefix --sysconfdir --prefsdir --userprefsdir --prefs
+      --builddate --enabled-components --cc --cxx --cflags
+    - gr_modtool --help
+    - gr_read_file_metadata --help
+  imports:
+    - gnuradio.analog
+    - gnuradio.audio
+    - gnuradio.blocks
+    - gnuradio.channels
+    - gnuradio.digital
+    - gnuradio.dtv
+    - gnuradio.fec
+    - gnuradio.fft
+    - gnuradio.filter
+    - gnuradio.gr
+    - gnuradio.network
+    - gnuradio.pdu
+    - gnuradio.trellis
+    - gnuradio.vocoder
+    - gnuradio.wavelet
+    - pmt
+app:
+  entry: gnuradio-companion
+  icon: grc-icon.png
+  summary: GNU Radio Companion
+about:
+  dev_url: https://github.com/gnuradio/gnuradio
+  doc_url: https://gnuradio.org/doc/doxygen/
+  home: https://gnuradio.org/
+  license: GPL-3.0-or-later
+  license_family: GPL
+  license_file: COPYING
+  summary: GNU Radio core functionality and modules
+extra:
+  copy_test_source_files: true
+  final: true
+  flow_run_id: azure_20250207.2.1
+  recipe-maintainers:
+    - ryanvolz
+  remote_url: https://github.com/conda-forge/gnuradio-feedstock
+  sha: 8f94bdf9dc4369a88ad003285795fc419ec92d98

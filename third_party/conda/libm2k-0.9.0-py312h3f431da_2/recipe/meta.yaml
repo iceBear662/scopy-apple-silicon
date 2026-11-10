@@ -1,0 +1,145 @@
+# This file created by conda-build 25.9.0
+# meta.yaml template originally from:
+# /Users/runner/work/1/s/recipe, last modified Tue Oct 21 19:38:26 2025
+# ------------------------------------------------
+
+package:
+  name: libm2k
+  version: 0.9.0
+source:
+  url: https://github.com/analogdevicesinc/libm2k/archive/refs/tags/v0.9.0.tar.gz
+  sha256: 9d58c7d5c9d9f1300e392893b0eb76e24e8eed0834695d2a9368210c16297ff5
+  patches:
+    - 0001-Don-t-set-a-specific-architecture-for-OSX.patch
+    - 0002-Query-Python-EXT_SUFFIX-to-set-the-extension-suffix.patch
+build:
+  number: '2'
+  run_exports:
+    - libm2k >=0.9.0,<0.10.0a0
+  string: py312h3f431da_2
+requirements:
+  build:
+    - bzip2 1.0.8 h500dc9f_8
+    - c-ares 1.34.5 hf13058a_0
+    - ca-certificates 2025.10.5 hbd8a1cb_0
+    - cctools_osx-64 1024.3 llvm19_1_h3b512aa_5
+    - cctools_osx-arm64 1024.3 llvm19_1_h5cc7f4e_5
+    - clang 19.1.7 default_h1323312_5
+    - clang-19 19.1.7 default_hc369343_5
+    - clang_impl_osx-arm64 19.1.7 h4fa02b8_25
+    - clang_osx-arm64 19.1.7 h1728699_25
+    - clangxx 19.1.7 default_h1c12a56_5
+    - clangxx_impl_osx-arm64 19.1.7 hd0141c2_25
+    - clangxx_osx-arm64 19.1.7 h1728699_25
+    - cmake 3.31.8 h29fc008_0
+    - compiler-rt 19.1.7 he914875_1
+    - compiler-rt_osx-64 19.1.7 h138dee1_1
+    - cross-python_osx-arm64 3.12 53_cpython
+    - crossenv 1.5.0 pyhcf101f3_3
+    - krb5 1.21.3 h37d8d59_0
+    - ld64_osx-64 955.13 llvm19_1_h466f870_5
+    - ld64_osx-arm64 955.13 llvm19_1_hcfa1dea_5
+    - libclang-cpp19.1 19.1.7 default_hc369343_5
+    - libcurl 8.16.0 h7dd4100_0
+    - libcxx 21.1.4 h3d58e20_0
+    - libcxx-devel 19.1.7 h7c275be_1
+    - libedit 3.1.20250104 pl5321ha958ccf_0
+    - libev 4.33 h10d778d_2
+    - libexpat 2.7.1 h21dd04a_0
+    - libffi 3.4.6 h281671d_1
+    - libiconv 1.18 h57a12c2_2
+    - libintl 0.25.1 h3184127_1
+    - libllvm19 19.1.7 h56e7563_2
+    - liblzma 5.8.1 hd471939_2
+    - libnghttp2 1.67.0 h3338091_0
+    - libsqlite 3.50.4 h39a8b3b_0
+    - libssh2 1.11.1 hed3591d_0
+    - libuv 1.51.0 h58003a5_1
+    - libxml2 2.15.1 h23bb396_0
+    - libxml2-16 2.15.1 h0ad03eb_0
+    - libzlib 1.3.1 hd23fc13_2
+    - llvm-tools 19.1.7 hb0207f0_2
+    - llvm-tools-19 19.1.7 h879f4bc_2
+    - lz4-c 1.10.0 h240833e_1
+    - macosx_deployment_target_osx-arm64 11.0 h6553868_2
+    - make 4.4.1 h00291cd_2
+    - ncurses 6.5 h0622a9a_3
+    - openssl 3.5.4 h230baf5_0
+    - pcre2 10.46 ha3e7e28_0
+    - popt 1.16 h7b079dc_2002
+    - python 3.12.12 h3999593_0_cpython
+    - readline 8.2 h7cca4af_2
+    - rhash 1.4.6 h6e16a3a_1
+    - rsync 3.4.1 hf2bfba0_2
+    - sed 4.9 hf9b2955_0
+    - sigtool 0.1.3 h88f4db0_0
+    - swig 4.4.0 hf470585_0
+    - tapi 1300.6.5 h390ca13_0
+    - tk 8.6.13 hf689a15_2
+    - tzdata 2025b h78e105d_0
+    - xxhash 0.8.3 h13e91ac_0
+    - zstd 1.5.7 h8210216_2
+  host:
+    - bzip2 1.0.8 hd037594_8
+    - ca-certificates 2025.10.5 hbd8a1cb_0
+    - icu 75.1 hfee45f7_0
+    - libcxx 21.1.4 hf598326_0
+    - libexpat 2.7.1 hec049ff_0
+    - libffi 3.4.6 h1da3d7d_1
+    - libiconv 1.18 h23cfdf5_2
+    - libiio 0.26 h00f1824_1
+    - libiio-c 0.26 h0c029c7_1
+    - liblzma 5.8.1 h39f12f2_2
+    - libsqlite 3.50.4 h4237e3c_0
+    - libusb 1.0.29 hbc156a2_0
+    - libxml2 2.13.8 h4a9ca0c_1
+    - libzlib 1.3.1 h8359307_2
+    - ncurses 6.5 h5e97a16_3
+    - openssl 3.5.4 h5503f6c_0
+    - pylibiio 0.26 py_1
+    - python 3.12.12 hec0b533_0_cpython
+    - readline 8.2 h1d1bf99_2
+    - setuptools 80.9.0 pyhff2d567_0
+    - tk 8.6.13 h892fb3f_2
+    - tzdata 2025b h78e105d_0
+    - zstd 1.5.7 h6491c7d_2
+  run:
+    - __osx >=11.0
+    - libcxx >=19
+    - libiio-c >=0.26,<1.0a0
+    - python >=3.12,<3.13.0a0
+    - python >=3.12,<3.13.0a0 *_cpython
+    - python_abi 3.12.* *_cp312
+test:
+  commands:
+    - m2kcli --help
+    - test -f $PREFIX/include/libm2k/m2k.hpp
+    - test -f $PREFIX/lib/libm2k${SHLIB_EXT}
+  imports:
+    - libm2k
+about:
+  home: https://github.com/analogdevicesinc/libm2k
+  license: LGPL-2.1-or-later
+  license_family: LGPL
+  license_file: LICENSE
+  summary: Library for interfacing with the ADALM2000
+  description: 'C++ library and python bindings for interfacing with
+
+    the ADALM2000 portable lab. This library simplifies
+
+    ADALM2000''s functionality into a series of easy to
+
+    use components.
+
+    '
+  doc_url: https://analogdevicesinc.github.io/libm2k/
+  dev_url: https://github.com/analogdevicesinc/libm2k
+extra:
+  recipe-maintainers:
+    - ryanvolz
+    - tfcollins
+  final: true
+  copy_test_source_files: true
+  flow_run_id: azure_20251021.3.1
+  remote_url: https://github.com/conda-forge/libm2k-feedstock
+  sha: 4ad10e1b9d319df96db206ec66e4df9098b50d8b

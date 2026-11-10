@@ -1,0 +1,94 @@
+# This file created by conda-build 26.9.1
+# ------------------------------------------------
+
+package:
+  name: llvm-openmp
+  version: 23.1.5
+source:
+  url: https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-23.1.5.zip
+  sha256: ec591946fa3c0d820b4271852530b2d7806362e3b9f6f60d19f26a85cd56056a
+  patches:
+    - patches/0001-don-t-build-z_Linux_asm.S-with-MSVC-ensure-__kmp_inv.patch
+build:
+  ignore_run_exports_from:
+    - clang_bootstrap_osx-arm64 21.*
+    - python *
+  run_exports:
+    strong:
+      - llvm-openmp >=23.1.5
+  number: 0
+  string: hdb3d66b_0
+requirements:
+  build:
+    - bzip2 1.0.8 h4e30115_10
+    - c-ares 1.34.9 h74c22ad_0
+    - ca-certificates 2026.10.23 hbd8a1cb_0
+    - clang_bootstrap_osx-arm64 21.1.8 hd5368c5_35
+    - cmake 4.4.5 h07a7c03_0
+    - icu 79.1 py311h7f96da7_0
+    - krb5 1.22.2 h34f8a20_2
+    - libcurl 8.23.0 h6651222_0
+    - libcxx 23.1.4 h55c6f16_2
+    - libedit 3.1.20260512 pl5321h26f1114_0
+    - libev 4.33 h1a92334_3
+    - libexpat 2.9.0 h6111c0a_0
+    - libffi 3.7.0 h47dc5ef_1
+    - liblzma 5.8.3 h8088a28_1
+    - libmpdec 4.0.0 h84a0fba_2
+    - libnghttp2 1.71.0 h29223de_0
+    - libpsl 0.23.1 h08d577c_2
+    - libsqlite 3.54.1 h9f98c0b_1
+    - libssh2 1.11.1 hbf2880b_1
+    - libuv 1.52.1 h1a92334_1
+    - libzlib 1.3.2 h8088a28_3
+    - macosx_deployment_target_osx-arm64 11.0 h214bdd9_7
+    - ncurses 6.6 he64c551_1
+    - openssl 3.6.5 h55eecbc_0
+    - python 3.15.2 h2e4dbab_100_cp315
+    - python_abi 3.15 9_cp315
+    - rhash 1.4.6 h84a0fba_2
+    - tk 8.6.13 hbeba79b_4
+    - tzdata 2026e h5d301ff_0
+    - zstd 1.5.7 hf451053_7
+  run_constrained:
+    - intel-openmp <0.0a0
+    - openmp 23.1.5|23.1.5.*
+  host:
+    - __osx >=11.0
+  run:
+    - __osx >=11.0
+test:
+  requires:
+    - clang-22
+    - clang_bootstrap_osx-arm64 21.*
+    - ld64
+  files:
+    - omp_hello.c
+  commands:
+    - test -f $PREFIX/include/omp.h
+    - test -f $PREFIX/lib/clang/22/include/omp.h
+    - test -f $PREFIX/lib/libomp.dylib
+    - export LNK="-L$PREFIX/lib -Wl,-rpath,$PREFIX/lib"
+    - $PREFIX/bin/clang-22 -v -fopenmp -I$PREFIX/include $LNK omp_hello.c -o omp_hello
+    - ./omp_hello
+about:
+  home: http://openmp.llvm.org/
+  license: Apache-2.0 WITH LLVM-exception
+  license_file: openmp/LICENSE.TXT
+  summary: The OpenMP API supports multi-platform shared-memory parallel programming
+    in C/C++ and Fortran.
+  dev_url: https://github.com/llvm/llvm-project/
+extra:
+  recipe-maintainers:
+    - beckermr
+    - h-vetinari
+    - inducer
+    - isuruf
+    - jakirkham
+    - katietz
+    - yesimon
+  final: true
+  copy_test_source_files: true
+  flow_run_id: azure_20261104.1.1
+  remote_url: https://github.com/conda-forge/openmp-feedstock
+  sha: 2e47a0684e1653c38ecfa15120b9ed375398be86

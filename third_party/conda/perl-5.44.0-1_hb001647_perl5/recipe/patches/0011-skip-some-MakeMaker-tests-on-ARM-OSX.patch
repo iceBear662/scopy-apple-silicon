@@ -1,0 +1,30 @@
+From 64187cd6252d975cec29a53c71da74c60b668223 Mon Sep 17 00:00:00 2001
+From: jvolkening <jdv@base2bio.com>
+Date: Thu, 3 Sep 2026 12:20:45 -0500
+Subject: [PATCH] skip some MakeMaker tests on ARM OSX
+
+---
+ cpan/ExtUtils-MakeMaker/t/04-xs-rpath-darwin.t | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/cpan/ExtUtils-MakeMaker/t/04-xs-rpath-darwin.t b/cpan/ExtUtils-MakeMaker/t/04-xs-rpath-darwin.t
+index 1848883..3d168a7 100644
+--- a/cpan/ExtUtils-MakeMaker/t/04-xs-rpath-darwin.t
++++ b/cpan/ExtUtils-MakeMaker/t/04-xs-rpath-darwin.t
+@@ -15,9 +15,13 @@ BEGIN {
+     unshift @INC, 'lib/';
+     use Test::More;
+     my ($osmajmin) = $Config{osvers} =~ /^(\d+\.\d+)/;
++    my $Is_AMD64 = $Config{archname} =~ /^x86_64/;
+     if( $^O ne "darwin" ) {
+         plan skip_all => 'Not darwin platform';
+     }
++    elsif( ! $Is_AMD64 ) {
++        plan skip_all => 'Not AMD64 platform (skip on Conda)';
++    }
+     elsif ($^O eq 'darwin' && $osmajmin < 9) {
+	 plan skip_all => 'For OS X Leopard and newer'
+     }
+-- 
+2.47.3
+

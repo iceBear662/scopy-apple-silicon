@@ -1,0 +1,161 @@
+context:
+  version: "8.6.13"
+  major: ${{ version | split(".") | first }}
+  minor: ${{ (version | split("."))[1] }}
+  maj_min: ${{ major }}.${{ minor }}
+  maj_min_nodot: ${{ major }}${{ minor }}
+  build: 4
+  # the variant prefix is only used in the build string on linux
+  string_prefix: ${{ (tk_variant | default("")) + "_" if (linux | default(false)) else "" }}
+
+package:
+  name: tk
+  version: ${{ version }}
+
+source:
+  - url: https://downloads.sourceforge.net/tcl/tcl${{ version }}-src.tar.gz
+    target_directory: tcl${{ version }}
+    sha256: 43a1fae7412f61ff11de2cfd05d28cfc3a73762f354a417c62370a54e2caf066
+  - url: https://downloads.sourceforge.net/tcl/tk${{ version }}-src.tar.gz
+    target_directory: tk${{ version }}
+    sha256: 2e65fa069a23365440a3c56c556b8673b5e32a283800d8d9b257e3f584ce0675
+
+build:
+  number: ${{ build + 100 if tk_variant == 'noxft' and linux else build }}
+  string: ${{ string_prefix }}h${{ hash }}_${{ build }}
+  variant:
+    use_keys:
+      - tk_variant
+    # deprioritize the xft variant (preserves preference for noxft, replaces v0 track_features)
+    down_prioritize_variant: ${{ 1 if (tk_variant | default("")) == "xft" else 0 }}
+
+requirements:
+  build:
+    - ${{ stdlib('c') }}
+    - ${{ compiler('c') }}
+    - if: unix
+      then: make
+    - if: linux and tk_variant == "xft"
+      then: pkg-config
+    - if: build_platform != target_platform
+      then: tk ${{ maj_min }}.*
+  host:
+    - if: unix
+      then: zlib
+    - if: linux
+      then:
+        - xorg-xorgproto
+        - xorg-libx11
+    - if: linux and tk_variant == "xft"
+      then:
+        - xorg-libxft
+        - fontconfig
+        - expat
+        # necessary for pkg-config metadata
+        - freetype
+  run_constraints:
+    - if: linux
+      then: ${{ pin_compatible("xorg-libx11") }}
+    - if: linux and tk_variant == "xft"
+      then:
+        - ${{ pin_compatible("xorg-libxft") }}
+        - ${{ pin_compatible("fontconfig") }}
+  run_exports:
+    # pin to major.minor because library names have that info in them
+    - ${{ pin_subpackage('tk', upper_bound='x.x') }}
+  ignore_run_exports:
+    from_package:
+      - if: linux
+        then: xorg-libx11
+      - if: linux and tk_variant == "xft"
+        then:
+          - xorg-libxft
+          - expat
+          - fontconfig
+          - freetype
+
+tests:
+  # Library naming note: "t" suffix means "full thread support" in Windows
+  #    https://sourceforge.net/p/tcl/mailman/tcl-bugs/thread/From_noreply@sourceforge.net_Mon_Jul_23_11:46:16_2012/
+  - package_contents:
+      bin:
+        - tclsh
+        - wish
+        - if: unix
+          then:
+            - tclsh${{ maj_min }}
+            - wish${{ maj_min }}
+        - if: win
+          then:
+            - tclsh${{ maj_min_nodot }}
+            - wish${{ maj_min_nodot }}
+      include:
+        - tcl.h
+        - tclDecls.h
+        - tclPlatDecls.h
+        - tclTomMathDecls.h
+        - tclTomMath.h
+        - tk.h
+        - tkDecls.h
+        - tkPlatDecls.h
+      lib:
+        - if: unix
+          then:
+            - tcl${{ maj_min }}
+            - tk${{ maj_min }}
+        - if: win
+          then:
+            - tcl${{ maj_min_nodot }}t
+            - tk${{ maj_min_nodot }}t
+      files:
+        # static and import libraries (not handled by `lib`)
+        - if: unix
+          then:
+            - lib/libtclstub${{ maj_min }}.a
+            - lib/libtkstub${{ maj_min }}.a
+        - if: win
+          then:
+            - Library/lib/tcl${{ maj_min_nodot }}t.lib
+            - Library/lib/tk${{ maj_min_nodot }}t.lib
+            - Library/lib/tclstub${{ maj_min_nodot }}.lib
+            - Library/lib/tkstub${{ maj_min_nodot }}.lib
+
+  - requirements:
+      run:
+        # in cross-compilation, some system libraries are not available natively
+        - if: build_platform != target_platform
+          then:
+            - xorg-libx11
+            - xorg-libxft
+    files:
+      recipe:
+        - hello.tcl
+    script:
+      # Check commands work and run a simple program.
+      - tclsh hello.tcl
+      - wish hello.tcl
+      - if: unix
+        then:
+          - tclsh${{ maj_min }} hello.tcl
+          - wish${{ maj_min }} hello.tcl
+      - if: win
+        then:
+          - tclsh${{ maj_min_nodot }} hello.tcl
+          - wish${{ maj_min_nodot }}t hello.tcl
+
+about:
+  homepage: http://www.tcl.tk/
+  license: TCL
+  license_file: tcl${{ version }}/license.terms
+  summary: A dynamic programming language with GUI support.  Bundles Tcl and Tk.
+  repository: https://github.com/tcltk/tk
+
+extra:
+  recipe-maintainers:
+    - jakirkham
+    - msarahan
+    - pelson
+    - ocefpaf
+    - isuruf
+    - matthiasdiener
+    - xhochy

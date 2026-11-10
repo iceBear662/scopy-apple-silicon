@@ -1,0 +1,95 @@
+{% set version = "5.44.0" %}
+{% set major_minor_version = version.split(".")[:2] | join(".") %}
+
+package:
+  name: perl
+  version: {{ version }}
+
+source:
+  - url: http://www.cpan.org/src/5.0/perl-{{ version }}.tar.xz
+    sha256: 505cf43912e9480495c344c70260452e32aa2a73c546a026b3f100053b23ce91
+    patches:
+      - patches/0001-Use-userelocatableinc-together-with-useshrplib.patch  # [unix]
+      - patches/0002-Disable-direct-invocation-of-linker-if-LD-is-set.patch
+      - patches/0003-update-setting-for-conda-directory-structure.patch  # [win]
+      - patches/0005-skip-perlbug-test-that-fails-on-multiple-platforms.patch
+      - patches/0006-allow-t-TTY-to-fail-on-Windows.patch  # [win]
+      - patches/0007-skip-several-tests-on-non-AMD64-unix.patch  # [unix]
+      - patches/0008-skip-newly-failing-Win32-tests.patch  # [win]
+      - patches/0009-skip-known-failing-DynaLoader-test-on-OS-X.patch  # [osx]
+      - patches/0011-skip-some-MakeMaker-tests-on-ARM-OSX.patch  # [osx]
+      - patches/0012-skip-threaded-locale-test-on-OSX.patch  # [osx]
+      - patches/0013-make-userelocatableinc-work-on-Windows.patch  # [win]
+
+build:
+  number: 1
+  string: {{ PKG_BUILDNUM }}_h{{ PKG_HASH }}_perl5
+  run_exports:
+    weak:
+      - {{ pin_subpackage("perl", max_pin="x.x") }}
+    noarch:
+      - {{ pin_subpackage("perl", max_pin="x") }}
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ stdlib("c") }}
+    - m2-patch  # [win] 
+    - m2-sed  # [win]
+    - make
+  host:
+    - libxcrypt  # [linux]
+
+test:
+  # downstreams:
+  #   - git
+  #   - automake
+  commands:
+    - perl --version
+    - |
+      perl -V:cf_by | grep -qF "'conda'"  # [unix]
+      perl -V:cf_email | grep -qF "'conda'"  # [unix]
+      perl -V:perladmin | grep -qF "'conda'"  # [unix]
+      perl -e 'print "$_\n" for @INC' | grep -qxF "${PREFIX}/lib/perl5/site_perl"  # [unix]
+      perl -e 'print "$_\n" for @INC' | grep -qxF "${PREFIX}/lib/perl5/vendor_perl"  # [unix]
+      perl -e 'print "$_\n" for @INC' | grep -qxF "${PREFIX}/lib/perl5/core_perl"  # [unix]
+      perl -e 'print "$_\n" for @INC' | grep -qxF "${PREFIX}/lib/perl5/{{ major_minor_version }}/site_perl"  # [unix]
+      perl -e 'print "$_\n" for @INC' | grep -qxF "${PREFIX}/lib/perl5/{{ major_minor_version }}/vendor_perl"  # [unix]
+      perl -e 'print "$_\n" for @INC' | grep -qxF "${PREFIX}/lib/perl5/{{ major_minor_version }}/core_perl"  # [unix]
+    # conda replaces back- by forward slashes during prefix placeholder replacement on installs:
+    #   This means our Config.pm and Config_heavy.pl etc. carry mixed back-/forward slashes
+    #   which Perl seems to handle well, though.
+    #   refs:
+    #     - https://github.com/conda/conda/blob/4.10.3/conda/core/portability.py#L37-L40
+    #     - https://github.com/conda/conda/pull/2630#discussion_r66468372
+    - perl -V  # [win]
+    - perl -e "print \"$_\n\" for @INC" | findstr /E "lib/perl5/site_perl"  # [win]
+    - perl -e "print \"$_\n\" for @INC" | findstr /E "lib/perl5/vendor_perl"  # [win]
+    - perl -e "print \"$_\n\" for @INC" | findstr /E "lib/perl5/core_perl"  # [win]
+    - perl -e "print \"$_\n\" for @INC" | findstr /E "lib/perl5/{{ major_minor_version }}/site_perl"  # [win]
+    - perl -e "print \"$_\n\" for @INC" | findstr /E "lib/perl5/{{ major_minor_version }}/vendor_perl"  # [win]
+    - perl -e "print \"$_\n\" for @INC" | findstr /E "lib/perl5/{{ major_minor_version }}/core_perl"  # [win]
+    # regression test for #79
+    - perl -Mstrict -e "print qq{Module loading succeeded\n}"
+
+about:
+  home: http://www.perl.org/
+  license: GPL-1.0-or-later OR Artistic-1.0-Perl
+  license_file:
+    - Artistic
+    - Copying
+  summary: "The Perl programming language interpreter."
+  description: |
+    Perl 5 is a highly capable, feature-rich programming language with over 29
+    years of development. Perl 5 runs on over 100 platforms from portables to
+    mainframes and is suitable for both rapid prototyping and large scale
+    development projects.
+  doc_url: https://www.perl.org/docs.html
+  dev_url: https://github.com/perl/perl5
+
+extra:
+  recipe-maintainers:
+    - jakirkham
+    - msarahan
+    - isuruf
+    - mbargull

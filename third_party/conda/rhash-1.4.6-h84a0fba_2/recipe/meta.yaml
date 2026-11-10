@@ -1,0 +1,87 @@
+# This file created by conda-build 26.7.0
+# meta.yaml template originally from:
+# /Users/runner/work/1/s/recipe, last modified Fri Aug 14 18:15:13 2026
+# ------------------------------------------------
+
+package:
+  name: rhash
+  version: 1.4.6
+source:
+  url: https://github.com/rhash/RHash/archive/v1.4.6.tar.gz
+  sha256: 9f6019cfeeae8ace7067ad22da4e4f857bb2cfa6c2deaa2258f55b2227ec937a
+  patches:
+    - 0001-Fix-install_name-on-OSX.patch
+build:
+  number: '2'
+  run_exports:
+    - rhash >=1.4.6,<2.0a0
+  string: h84a0fba_2
+requirements:
+  build:
+    - ca-certificates 2026.7.22 hbd8a1cb_0
+    - cctools_impl_osx-64 1030.6.3 llvm19_1_h6ae9dcd_5
+    - cctools_impl_osx-arm64 1030.6.3 llvm19_1_h317eeb0_5
+    - cctools_osx-arm64 1030.6.3 llvm19_1_h0e16ad9_5
+    - clang 19.1.7 default_h1323312_5
+    - clang-19 19.1.7 default_hc369343_5
+    - clang_impl_osx-64 19.1.7 hc73cdc9_28
+    - clang_impl_osx-arm64 19.1.7 h4c5f930_34
+    - clang_osx-arm64 19.1.7 h877a2d5_34
+    - compiler-rt 19.1.7 he914875_1
+    - compiler-rt_osx-64 19.1.7 h138dee1_1
+    - ld64_osx-64 956.6 llvm19_1_hf4e8e46_5
+    - ld64_osx-arm64 956.6 llvm19_1_hd5dc7e1_5
+    - libclang-cpp19.1 19.1.7 default_hc369343_5
+    - libcxx 22.1.8 h19cb2f5_0
+    - libiconv 1.18 h57a12c2_2
+    - libllvm19 19.1.7 h56e7563_2
+    - liblzma 5.8.3 hbb4bfdb_1
+    - libsigtool 0.1.3 h8c25ef7_1
+    - libxml2 2.15.3 h0712280_0
+    - libxml2-16 2.15.3 h0d7f165_0
+    - libzlib 1.3.2 hbb4bfdb_3
+    - llvm-tools 19.1.7 hb0207f0_2
+    - llvm-tools-19 19.1.7 h879f4bc_2
+    - macosx_deployment_target_osx-arm64 11.0 h214bdd9_7
+    - make 4.4.1 ha1e9b39_3
+    - ncurses 6.6 hcc0dc9a_1
+    - openssl 3.6.3 hc881268_1
+    - sdkroot_env_osx-arm64 26.0 ha3f98da_7
+    - sigtool-codesign 0.1.3 h8c25ef7_1
+    - tapi 1600.0.11.8 h44950e2_3
+    - zstd 1.5.7 hbc1a06c_7
+  host:
+    - __osx >=11.0
+  run:
+    - __osx >=11.0
+test:
+  requires:
+    - cctools
+  commands:
+    - test -f "$PREFIX/include/rhash.h"
+    - test -f "$PREFIX/lib/librhash${SHLIB_EXT}"
+    - test -f "$PREFIX/lib/librhash.1.dylib"
+    - otool -l $PREFIX/lib/librhash.1.4.6.dylib | grep name | grep librhash.1.dylib
+    - rhash --version
+about:
+  home: http://rhash.anz.ru/
+  license: MIT
+  license_family: MIT
+  license_file: COPYING
+  summary: Great utility for computing hash sums
+  description: 'RHash is a console utility for computing and verifying hash sums of
+    files. It supports CRC32, MD4, MD5, SHA1, SHA256, SHA512, SHA3, Tiger, TTH, Torrent
+    BTIH, AICH, ED2K, GOST R 34.11-94, RIPEMD-160, HAS-160, EDON-R 256/512, WHIRLPOOL
+    and SNEFRU hash sums.
+
+    '
+  doc_url: http://rhash.anz.ru/manpage.php
+  dev_url: https://github.com/rhash/RHash
+extra:
+  recipe-maintainers:
+    - isuruf
+  final: true
+  copy_test_source_files: true
+  flow_run_id: azure_20260814.1.1
+  remote_url: https://github.com/conda-forge/rhash-feedstock
+  sha: 2c25175d0ebf03f928cadbcd05ecbdf13689ab51

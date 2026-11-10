@@ -1,0 +1,62 @@
+# This file created by conda-build 26.7.0
+# ------------------------------------------------
+
+package:
+  name: xz-tools
+  version: 5.8.3
+source:
+  url: https://github.com/tukaani-project/xz/releases/download/v5.8.3/xz-5.8.3.tar.gz
+  sha256: 3d3a1b973af218114f4f889bbaa2f4c037deaae0c8e815eec381c3d546b974a0
+build:
+  number: '1'
+  script: install.sh
+  noarch: false
+  noarch_python: false
+  python_version_independent: false
+  string: h8088a28_1
+requirements:
+  build:
+    - clang_bootstrap_osx-arm64 19.1.7 h28a8b13_34
+    - macosx_deployment_target_osx-arm64 11.0 h214bdd9_7
+    - make 4.4.1 h84a0fba_3
+  host:
+    - liblzma 5.8.3 h8088a28_1
+    - liblzma-devel 5.8.3 h8088a28_1
+  run:
+    - __osx >=11.0
+    - liblzma 5.8.3 h8088a28_1
+  run_constrained:
+    - xz 5.8.3.*
+test:
+  commands:
+    - lzcat --help
+    - lzma --help
+    - lzmadec --help
+    - lzmainfo --help
+    - unlzma --help
+    - unxz --help
+    - xz --help
+    - xzcat --help
+    - xzdec --help
+about:
+  home: http://tukaani.org/xz/
+  dev_url: http://git.tukaani.org/
+  summary: A set of tools to work with xz-/lzma-compressed files
+  license: 0BSD AND LGPL-2.1-or-later
+  license_file:
+    - COPYING
+    - COPYING.0BSD
+    - COPYING.LGPLv2.1
+extra:
+  recipe-maintainers:
+    - mingwandroid
+    - msarahan
+    - nehaljwani
+    - ocefpaf
+    - scopatz
+    - xhochy
+  final: true
+  copy_test_source_files: true
+  flow_run_id: azure_20260810.1.1
+  remote_url: https://github.com/conda-forge/xz-feedstock
+  sha: bc37fbf54469221332fc589c1404294a159f403b

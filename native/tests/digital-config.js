@@ -1,0 +1,36 @@
+function check(condition, message) { if (!condition) throw new Error(message); }
+check(launcher.connect("ip:127.0.0.1"), "connect failed");
+logic.enabledChannels = [0, 1, 7, 15];
+check(logic.enabledChannels.indexOf(15) >= 0, "Logic channel 15 not enabled");
+var names = logic.channelNames;
+var longName = "中文通道 🚀 " + new Array(65).join("长");
+names[0] = longName;
+logic.channelNames = names;
+check(logic.channelNames[0] === longName, "Unicode channel name did not round-trip");
+logic.enabledDecoders = ["uart"];
+check(logic.enabledDecoders.indexOf("uart") >= 0, "UART decoder could not be added");
+pattern.enabledChannels = [0, 15];
+check(pattern.enabledChannels.indexOf(15) >= 0, "Pattern channel 15 not enabled");
+var patternNames = pattern.channelNames;
+patternNames[0] = "模式发生器 ✓";
+pattern.channelNames = patternNames;
+check(pattern.channelNames[0] === "模式发生器 ✓", "Pattern name did not round-trip");
+var direction = [], value = [];
+for (var i = 0; i < 16; ++i) { direction.push(false); value.push(false); }
+dio.dir = direction;
+dio.out = value;
+dio.running = true;
+msleep(150);
+check(dio.running, "Digital IO did not start");
+check(dio.gpi.length === 16, "Digital IO did not return 16 inputs");
+dio.running = false;
+power.dac1_value = 1;
+power.dac2_value = -1;
+power.dac1_enabled = true;
+power.dac2_enabled = true;
+msleep(100);
+check(power.dac1_enabled && power.dac2_enabled, "Power supplies did not enable in demo mode");
+power.dac1_enabled = false;
+power.dac2_enabled = false;
+launcher.disconnect();
+printToConsole("TEST_DIGITAL_AND_POWER_PASSED");

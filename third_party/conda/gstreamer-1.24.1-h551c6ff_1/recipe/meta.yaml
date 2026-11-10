@@ -1,0 +1,151 @@
+# This file created by conda-build 24.1.2
+# ------------------------------------------------
+
+package:
+  name: gstreamer
+  version: 1.24.1
+source:
+  - sha256: 88fc3629a8cacf7955d8671b2ae867d4a52a07b6948daa25b67feed22f8055ef
+    url: https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.24.1.tar.xz
+  - folder: plugins_base
+    sha256: 884045d1d7c5d6bb8605e45c7ee0e9f1341888e81c2b7c42dff52bb98ede8ec3
+    url: https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.24.1.tar.xz
+  - folder: plugins_good
+    patches: null
+    sha256: c02ba5583863e0bd9e265e5e4a27a03a3c473eb9ec1c10b07238f7176d9368a2
+    url: https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.24.1.tar.xz
+build:
+  activate_in_script: true
+  ignore_run_exports:
+    - python
+    - python_abi
+  number: 1
+  run_exports:
+    - gstreamer >=1.24.1,<1.25.0a0
+  string: h551c6ff_1
+requirements:
+  build:
+    - bison 3.8.2 hd7636e7_0
+    - bzip2 1.0.8 h10d778d_5
+    - ca-certificates 2024.2.2 h8857fd0_0
+    - cairo 1.18.0 h99e66fa_0
+    - cctools_osx-64 986 ha1c5b94_0
+    - cctools_osx-arm64 986 h7bb7a8e_0
+    - clang 16.0.6 hdae98eb_6
+    - clang-16 16.0.6 default_h7151d67_6
+    - clang_impl_osx-arm64 16.0.6 ha81d56d_11
+    - clang_osx-arm64 16.0.6 h40be2b1_11
+    - clangxx 16.0.6 default_h7151d67_6
+    - clangxx_impl_osx-arm64 16.0.6 h4a79b72_11
+    - clangxx_osx-arm64 16.0.6 h40be2b1_11
+    - compiler-rt 16.0.6 ha38d28d_2
+    - compiler-rt_osx-64 16.0.6 ha38d28d_2
+    - cross-python_osx-arm64 3.10 41_cpython
+    - crossenv 1.4.0 pyhd8ed1ab_0
+    - expat 2.6.2 h73e2aa4_0
+    - flex 2.6.4 hcc69e7b_1004
+    - font-ttf-dejavu-sans-mono 2.37 hab24e00_0
+    - font-ttf-inconsolata 3.000 h77eed37_0
+    - font-ttf-source-code-pro 2.038 h77eed37_0
+    - font-ttf-ubuntu 0.83 h77eed37_1
+    - fontconfig 2.14.2 h5bb23bf_0
+    - fonts-conda-ecosystem 1 0
+    - fonts-conda-forge 1 0
+    - freetype 2.12.1 h60636b9_2
+    - g-ir-build-tools 1.78.1 py310h3454076_1
+    - g-ir-host-tools 1.78.1 hac017ca_1
+    - gettext 0.21.1 h8a4c099_0
+    - gobject-introspection 1.78.1 py310hae22443_1
+    - icu 73.2 hf5e326d_0
+    - ld64_osx-64 711 ha20a434_0
+    - ld64_osx-arm64 711 h6aa3cc8_0
+    - libclang-cpp16 16.0.6 default_h7151d67_6
+    - libcxx 16.0.6 hd57cbcb_0
+    - libexpat 2.6.2 h73e2aa4_0
+    - libffi 3.4.2 h0d85af4_5
+    - libgirepository 1.78.1 h388745a_1
+    - libglib 2.80.0 h81c1438_1
+    - libiconv 1.17 hd75f5a5_2
+    - libllvm16 16.0.6 hbedff68_3
+    - libpng 1.6.43 h92b6c6a_0
+    - libsqlite 3.45.2 h92b6c6a_0
+    - libxml2 2.12.6 hc0ae0f7_0
+    - libzlib 1.2.13 h8a1eda9_5
+    - llvm-tools 16.0.6 hbedff68_3
+    - lz4-c 1.9.4 hf0c8a7f_0
+    - m4 1.4.18 haf1e3a3_1001
+    - meson 1.4.0 pyhd8ed1ab_0
+    - ncurses 6.4.20240210 h73e2aa4_0
+    - ninja 1.11.1 hb8565cd_0
+    - openssl 3.2.1 hd75f5a5_1
+    - pcre2 10.43 h0ad2156_0
+    - pixman 0.43.4 h73e2aa4_0
+    - pkg-config 0.29.2 ha3d46e9_1008
+    - popt 1.16 h7b079dc_2002
+    - python 3.10.14 h00d2728_0_cpython
+    - python_abi 3.10 4_cp310
+    - readline 8.2 h9e318b2_1
+    - rsync 3.2.7 h30d983d_0
+    - sed 4.7 h3efe00b_1000
+    - setuptools 69.2.0 pyhd8ed1ab_0
+    - sigtool 0.1.3 h88f4db0_0
+    - tapi 1100.0.11 h9ce4665_0
+    - tk 8.6.13 h1abcd95_1
+    - tzdata 2024a h0c530f3_0
+    - xxhash 0.8.0 h35c211d_3
+    - xz 5.2.6 h775f41a_0
+    - zlib 1.2.13 h8a1eda9_5
+    - zstd 1.5.5 h829000d_0
+  host:
+    - bzip2 1.0.8 h93a5062_5
+    - ca-certificates 2024.2.2 hf0a4a13_0
+    - gettext 0.21.1 h0186832_0
+    - glib 2.80.0 hfc324ee_1
+    - glib-tools 2.80.0 hb9a4d99_1
+    - libcxx 16.0.6 h4653b0c_0
+    - libffi 3.4.2 h3422bc3_5
+    - libglib 2.80.0 hfc324ee_1
+    - libiconv 1.17 h0d3ecfb_2
+    - libsqlite 3.45.2 h091b4b1_0
+    - libzlib 1.2.13 h53f4e23_5
+    - ncurses 6.4.20240210 h078ce10_0
+    - openssl 3.2.1 h0d3ecfb_1
+    - pcre2 10.43 h26f9a81_0
+    - python 3.10.14 h2469fbe_0_cpython
+    - readline 8.2 h92ec313_1
+    - tk 8.6.13 h5083fa2_1
+    - tzdata 2024a h0c530f3_0
+    - xz 5.2.6 h57fd34a_0
+  run:
+    - gettext >=0.21.1,<1.0a0
+    - glib >=2.80.0,<3.0a0
+    - libcxx >=16
+    - libglib >=2.80.0,<3.0a0
+    - libiconv >=1.17,<2.0a0
+test:
+  commands:
+    - gst-inspect-1.0 --version
+    - gst-launch-1.0  --version
+    - gst-stats-1.0 --version
+    - gst-typefind-1.0 --version
+    - test -f $PREFIX/lib/girepository-1.0/Gst-1.0.typelib
+about:
+  description: null
+  doc_source_url: https://cgit.freedesktop.org/gstreamer/gstreamer/tree/docs
+  license: LGPL-2.0-or-later
+  license_file: COPYING
+  summary: Library for constructing graphs of media-handling components
+extra:
+  copy_test_source_files: true
+  final: true
+  flow_run_id: azure_20240324.2.1
+  recipe-maintainers:
+    - andfoy
+    - ccordoba12
+    - hmaarrfk
+    - mingwandroid
+    - msarahan
+    - scopatz
+    - tschoonj
+  remote_url: https://github.com/conda-forge/gstreamer-feedstock
+  sha: e40796002e915585a7519be412076a347d12cb70

@@ -1,0 +1,66 @@
+From f1b4c86b1cc8c1829b1aaea404179f1e98352e1d Mon Sep 17 00:00:00 2001
+From: jvolkening <jdv@base2bio.com>
+Date: Sat, 19 Sep 2026 12:41:40 -0500
+Subject: [PATCH] skip several tests on non-AMD64 unix
+
+---
+ t/op/magic.t | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/t/op/magic.t b/t/op/magic.t
+index 929a746..0230ac1 100644
+--- a/t/op/magic.t
++++ b/t/op/magic.t
+@@ -54,6 +54,7 @@ $Is_VMS      = $^O eq 'VMS';
+ $Is_os2      = $^O eq 'os2';
+ $Is_Cygwin   = $^O eq 'cygwin';
+ $Is_ZOS      = $^O eq 'os390';
++$Is_AMD64    = $Config{archname} =~ /^x86_64/;
+ 
+ $PERL =
+    ($Is_VMS     ? $^X      :
+@@ -406,7 +407,7 @@ EOP
+ # argv[0] assignment and by calling prctl()
+ {
+   SKIP: {
+-    skip "We don't have prctl() here, or we're on Android", 2 unless $Config{d_prctl_set_name} && $^O ne 'android';
++    skip "We don't have prctl() here, or we're on Android", 2 unless $Config{d_prctl_set_name} && $^O ne 'android' && $Is_AMD64;
+ 
+     # We don't really need these tests. prctl() is tested in the
+     # Kernel, but test it anyway for our sanity. If something doesn't
+@@ -501,6 +502,7 @@ SKIP:
+   SKIP: {
+     my $skip_tests = 2;
+     skip "Test is for Linux, not $^O", $skip_tests if $^O ne 'linux';
++    skip "Conda builds: problems with /proc when cross-compiling", $skip_tests;
+     my $slurp = $linux_cmdline_cr->($skip_tests);
+     is( $slurp, $char_with_utf8_pv,
+         '/proc cmdline shows as expected (compare to UTF8-flagged)' );
+@@ -526,6 +528,7 @@ SKIP:
+   SKIP: {
+     my $skip_tests = 1;
+     skip "Test is for Linux, not $^O" if $^O ne 'linux';
++    skip "Conda builds: problems with /proc when cross-compiling", $skip_tests;
+     is( $linux_cmdline_cr->($skip_tests), $name_utf8_bytes, '.. and /proc cmdline shows that');
+   }
+ 
+@@ -913,13 +916,13 @@ SKIP: {
+ 	env_is(__NoNeLoCaL => '');
+ 
+     SKIP: {
+-        skip("\$0 check only on Linux, Dragonfly BSD and FreeBSD", 2)
+-        unless $^O =~ /^(linux|android|dragonfly|freebsd)$/;
++        skip("\$0 check only on Linux, Dragonfly BSD and FreeBSD (on AMD64)", 2)
++        unless ($^O =~ /^(linux|android|dragonfly|freebsd)$/ && $Is_AMD64);
+ 
+         SKIP: {
+             skip("No procfs cmdline support", 1)
+                 unless open CMDLINE, "/proc/$$/cmdline";
+-
++            skip "Conda builds: problems with /proc when cross-compiling", 1;
+             chomp(my $line = scalar <CMDLINE>);
+             my $me = (split /\0/, $line)[0];
+             is $me, $0, 'altering $0 is effective (testing with /proc/)';
+-- 
+2.47.3
+

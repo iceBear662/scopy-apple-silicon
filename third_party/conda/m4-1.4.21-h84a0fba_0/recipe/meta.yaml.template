@@ -1,0 +1,46 @@
+{% set version = "1.4.21" %}
+
+package:
+  name: m4
+  version: {{ version }}
+
+source:
+  url: http://ftp.gnu.org/gnu/m4/m4-{{ version }}.tar.gz
+  sha256: 38ae59f7a30bf9c108193cc5c25fbb06014f21e230c7ede2eff614f7b7c37ed8
+
+build:
+  number: 0
+  skip: true  # [win]
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ stdlib("c") }}
+    - libtool
+    - make
+
+test:
+  commands:
+    - m4 --help
+    - m4 --version
+
+about:
+  home: http://www.gnu.org/software/m4/
+  license: GPL-3.0-or-later
+  license_file: COPYING
+  summary: 'Implementation of the traditional Unix macro processor.'
+
+  description: |
+    GNU M4 is an implementation of the traditional Unix macro processor. It is
+    mostly SVR4 compatible although it has some extensions (for example,
+    handling more than 9 positional parameters to macros). GNU M4 also has
+    built-in functions for including files, running shell commands, doing
+    arithmetic, etc.
+  doc_url: http://www.gnu.org/software/m4/manual/index.html
+  dev_url: http://git.savannah.gnu.org/gitweb/?p=m4.git
+
+extra:
+  recipe-maintainers:
+    - ocefpaf
+    - mingwandroid
+    - xhochy

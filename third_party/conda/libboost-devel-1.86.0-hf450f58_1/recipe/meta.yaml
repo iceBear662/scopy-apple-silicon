@@ -1,0 +1,99 @@
+# This file created by conda-build 24.7.1
+# ------------------------------------------------
+
+package:
+  name: libboost-devel
+  version: 1.86.0
+source:
+  patches:
+    - patches/0001-Add-default-value-for-cxx-and-cxxflags-options-for-t.patch
+    - patches/0002-Support-numpy-2.0.0b1.patch
+    - patches/0003-Support-numpy-2.0.patch
+  sha256: 1bed88e40401b2cb7a1f76d4bab499e352fa4d0c5f31c0dbae64e24d34d7513b
+  url: https://boostorg.jfrog.io/artifactory/main/release/1.86.0/source/boost_1_86_0.tar.bz2
+build:
+  number: 1
+  run_exports:
+    - libboost >=1.86.0,<1.87.0a0
+  string: hf450f58_1
+requirements:
+  host:
+    - libboost 1.86.0 h610977f_1
+    - libboost-headers 1.86.0 hce30654_1
+  run:
+    - libboost 1.86.0 h610977f_1
+    - libboost-headers 1.86.0 hce30654_1
+  run_constrained:
+    - boost-cpp <0.0a0
+test:
+  commands:
+    - test -d $PREFIX/lib/cmake/Boost-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_atomic-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_charconv-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_chrono-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_cobalt-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_container-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_context-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_contract-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_coroutine-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_date_time-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_filesystem-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_graph-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_iostreams-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_locale-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_log-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_log_setup-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_math_c99-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_math_c99f-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_math_tr1-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_math_tr1f-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_prg_exec_monitor-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_program_options-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_random-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_regex-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_serialization-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_system-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_thread-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_timer-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_type_erasure-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_unit_test_framework-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_wave-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_wserialization-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_math_c99l-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_math_tr1l-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_exception-1.86.0
+    - test -d $PREFIX/lib/cmake/boost_test_exec_monitor-1.86.0
+    - test ! -d $PREFIX/lib/cmake/boost_python-1.86.0
+    - test ! -d $PREFIX/lib/cmake/boost_numpy-1.86.0
+    - ./test_lib.sh
+  files:
+    - test
+    - test_lib.bat
+    - test_lib.sh
+  requires: null
+about:
+  dev_url: https://github.com/boostorg/boost
+  doc_url: https://www.boost.org/doc/
+  home: http://www.boost.org/
+  license: BSL-1.0
+  license_file: LICENSE_1_0.txt
+  summary: Free peer-reviewed portable C++ source libraries.
+extra:
+  copy_test_source_files: true
+  feedstock-name: boost
+  final: true
+  flow_run_id: azure_20240817.1.1
+  recipe-maintainers:
+    - beckermr
+    - ccordoba12
+    - h-vetinari
+    - isuruf
+    - jakirkham
+    - jschueller
+    - matthiasdiener
+    - msarahan
+    - ocefpaf
+    - scopatz
+    - xhochy
+  remote_url: https://github.com/conda-forge/boost-feedstock
+  sha: d35c4982bfe206c7fe4955de19e064db87a83b47

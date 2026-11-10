@@ -1,0 +1,110 @@
+{% set version = "1.2.0" %}
+
+package:
+  name: codec2-split
+  version: {{ version }}
+
+source:
+  url: https://github.com/drowe67/codec2/archive/refs/tags/{{ version }}.tar.gz
+  sha256: cbccae52b2c2ecc5d2757e407da567eb681241ff8dadce39d779a7219dbcf449
+  patches:
+    - 0001-Fix-CMake-include-of-GetPrerequisites.patch
+    - 0002-Add-optional-installation-of-command-line-programs.patch
+
+build:
+  number: 3
+
+requirements:
+  build:
+    - {{ compiler('c') }}  # [not win]
+    - {{ stdlib('c') }}  # [not win]
+    # upstream does not support compiling with MSVC
+    - {{ compiler('m2w64_c') }}  # [win]
+    - {{ stdlib('m2w64_c') }}  # [win]
+    - cmake
+    - ninja
+
+outputs:
+  - name: libcodec2
+    script: install_libcodec2.bat  # [win]
+    script: install_libcodec2.sh  # [not win]
+    build:
+      run_exports:
+        - {{ pin_subpackage('libcodec2', max_pin='x.x') }}
+    requirements:
+      build:
+        - {{ compiler('c') }}  # [not win]
+        - {{ stdlib('c') }}  # [not win]
+        - {{ compiler('m2w64_c') }}  # [win]
+        - cmake
+        - ninja
+    test:
+      commands:
+        # verify that (some) headers get installed
+        - test -f $PREFIX/include/codec2/codec2.h  # [not win]
+        - test -f $PREFIX/include/codec2/version.h  # [not win]
+        - if not exist %PREFIX%\\Library\\include\\codec2\\codec2.h exit 1  # [win]
+        - if not exist %PREFIX%\\Library\\include\\codec2\\version.h exit 1  # [win]
+
+        # verify that libraries get installed
+        - test -f $PREFIX/lib/libcodec2${SHLIB_EXT}  # [not win]
+        - if not exist %PREFIX%\\Library\\bin\\libcodec2.dll exit 1  # [win]
+        - if not exist %PREFIX%\\Library\\lib\\libcodec2.dll.a exit 1  # [win]
+        - if not exist %PREFIX%\\Library\\lib\\libcodec2.lib exit 1  # [win]
+
+  - name: codec2
+    script: install_codec2.bat  # [win]
+    script: install_codec2.sh  # [not win]
+    build:
+      run_exports:
+        - {{ pin_subpackage('libcodec2', max_pin='x.x') }}
+    requirements:
+      build:
+        - {{ compiler('c') }}  # [not win]
+        - {{ stdlib('c') }}  # [not win]
+        - {{ compiler('m2w64_c') }}  # [win]
+        - cmake
+        - ninja
+      host:
+        - libcodec2
+      run:
+        - {{ pin_subpackage('libcodec2', exact=True) }}
+    test:
+      commands:
+        # verify that executables can be run
+        # don't test ofdm_demod, ofdm_mod, and tollr
+        # because they don't conform to the pattern (print usage, return 1)
+        {% set cmds = ["c2dec", "c2enc", "c2sim", "cohpsk_demod"] %}
+        {% set cmds = cmds + ["cohpsk_get_test_bits", "cohpsk_mod", "cohpsk_put_test_bits"] %}
+        {% set cmds = cmds + ["deframer", "fdmdv_demod"] %}
+        {% set cmds = cmds + ["fdmdv_get_test_bits", "fdmdv_mod", "fdmdv_put_test_bits"] %}
+        {% set cmds = cmds + ["framer"] %}
+        {% set cmds = cmds + ["freedv_data_raw_rx", "freedv_data_raw_tx"] %}
+        {% set cmds = cmds + ["freedv_data_rx", "freedv_data_tx"] %}
+        {% set cmds = cmds + ["freedv_mixed_rx", "freedv_mixed_tx"] %}
+        {% set cmds = cmds + ["freedv_rx", "freedv_tx"] %}
+        {% set cmds = cmds + ["fsk_demod", "fsk_get_test_bits", "fsk_mod"] %}
+        {% set cmds = cmds + ["fsk_put_test_bits"] %}
+        {% set cmds = cmds + ["ldpc_dec", "ldpc_enc", "ldpc_noise"] %}
+        {% set cmds = cmds + ["ofdm_get_test_bits", "ofdm_put_test_bits"] %}
+        {% set cmds = cmds + ["vhf_deframe_c2", "vhf_frame_c2"] %}
+        {% for cmd in cmds %}
+        - {{ cmd }} || ec=$?; if [ $ec -gt 1 ]; then exit $ec; fi  # [not win]
+        - {{ cmd }} || if !ERRORLEVEL! LEQ 1 cmd /c "exit /b 0"  # [win]
+        {% endfor %}
+
+about:
+  home: http://www.rowetel.com/codec2.html
+  license: LGPL-2.1-or-later
+  license_family: LGPL
+  license_file: COPYING
+  summary: An open source low bit rate speech codec
+  description: |
+    Open source speech codec designed for communications quality speech between 450
+    and 3200 bit/s. The main application is low bandwidth HF/VHF digital radio.
+  dev_url: https://github.com/drowe67/codec2
+
+extra:
+  feedstock-name: codec2
+  recipe-maintainers:
+    - ryanvolz

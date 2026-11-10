@@ -1,0 +1,62 @@
+# This file created by conda-build 26.9.1
+# ------------------------------------------------
+
+package:
+  name: libcblas
+  version: 3.11.0
+source:
+  - url: https://github.com/Reference-LAPACK/lapack/archive/v3.11.0.tar.gz
+    sha256: 4b9ba79bfd4921ca820e83979db76ab3363155709444a787979e81c22285ffa9
+    patches:
+      - patches/0001-Test-BLAS-and-LAPACKE-in-addition-to-LAPACK.patch
+      - patches/0002-read-pipe-as-binary.patch
+      - patches/0003-add-DLL-import-export-machinery-for-RowMajorStrg.patch
+      - patches/0004-fixed-bug-in-array-bounds-in-complex-syl01-test.patch
+      - patches/0005-Use-dynamic-allocation-in-SYL01-tests.patch
+  - url: https://github.com/isuruf/vecLibFort/archive/99af8640e98c829b41c3235e3706760cd5696fe4.tar.gz
+    sha256: 80de7c6e83d1d84d016b4cb299f2c15f5a82b9d36865dd5c16bf221fe9a303ad
+    folder: vecLibFort
+build:
+  string: 12_hb0561ab_openblas
+  run_exports:
+    - libcblas >=3.11.0,<4.0a0
+  track_features: null
+  number: 12
+requirements:
+  host:
+    - _openmp_mutex 4.5 8_kmp_llvm
+    - libblas 3.11.0 12*_openblas
+    - libgcc 16.2.0 h3cf6597_7
+    - libgfortran 16.2.0 h07b0088_7
+    - libgfortran5 16.2.0 hdb7a957_7
+    - libopenblas 0.3.34 openmp_h5e6e99c_1
+    - llvm-openmp 23.1.4 hdb3d66b_0
+  run:
+    - libblas 3.11.0 12_h51639a9_openblas
+  run_constrained:
+    - blas 2.312   openblas
+    - liblapack  3.11.0   12*_openblas
+    - liblapacke 3.11.0   12*_openblas
+test:
+  commands:
+    - test -f $PREFIX/lib/libcblas.3.dylib
+about:
+  home: https://github.com/conda-forge/blas-feedstock
+  license: BSD-3-Clause
+  license_file:
+    - LICENSE.txt
+  summary: Metapackage to select the BLAS variant. Use conda's pinning mechanism in
+    your environment to control which variant you want.
+extra:
+  recipe-maintainers:
+    - h-vetinari
+    - isuruf
+    - jakirkham
+    - ocefpaf
+    - pelson
+  feedstock-name: blas
+  final: true
+  copy_test_source_files: true
+  flow_run_id: azure_20261104.1.1
+  remote_url: https://github.com/conda-forge/blas-feedstock
+  sha: 6f8ce1ca499857bdc459fcff324bdb4512c9d8d9

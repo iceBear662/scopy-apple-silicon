@@ -1,0 +1,33 @@
+When building libgettextsrc on Windows, we run into an error with an undefined symbol
+`close_used_without_requesting_gnulib_module_close`. This appears to be because
+the build adds `../libgrep` to the C preprocesor include path, and that directory
+includes a `unistd.h` that does not have gnulib's replacement for the standard C
+function `close()` defined. This is because libgrep doesn't rely on anything that
+needs it, and gnulib has infrastructure to only include configure checks for the
+elements that are needed by a given library. But libgettextsrc's `write-catalog.c`
+shouldn't be built against this version of `unistd.h`, because it uses `close()`
+and therefore does need the wrapper. The solution is to only add libgrep to the
+preprocessor search path for the `msggrep` program, which is the one that actually
+needs the library.
+
+diff --git a/gettext-tools/src/Makefile.am b/gettext-tools/src/Makefile.am
+index 0f2453a..ba5bab9 100644
+--- a/gettext-tools/src/Makefile.am
++++ b/gettext-tools/src/Makefile.am
+@@ -93,7 +93,6 @@ pkglibdir = $(libdir)/gettext
+ AM_CPPFLAGS = \
+   -I. -I$(srcdir) \
+   -I.. -I$(top_srcdir) \
+-  -I$(top_srcdir)/libgrep \
+   -I../gnulib-lib -I$(top_srcdir)/gnulib-lib \
+   -I../intl -I$(top_srcdir)/../gettext-runtime/intl
+ DEFS = \
+@@ -402,7 +401,7 @@ msgconv_CPPFLAGS = $(AM_CPPFLAGS) -DINSTALLDIR=\"$(bindir)\"
+ msgen_CPPFLAGS = $(AM_CPPFLAGS) -DINSTALLDIR=\"$(bindir)\"
+ msgexec_CPPFLAGS = $(AM_CPPFLAGS) -DINSTALLDIR=\"$(bindir)\"
+ msgfilter_CPPFLAGS = $(AM_CPPFLAGS) -DINSTALLDIR=\"$(bindir)\"
+-msggrep_CPPFLAGS = $(AM_CPPFLAGS) -DINSTALLDIR=\"$(bindir)\"
++msggrep_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/libgrep -DINSTALLDIR=\"$(bindir)\"
+ msginit_CPPFLAGS = $(AM_CPPFLAGS) -DINSTALLDIR=\"$(bindir)\"
+ msguniq_CPPFLAGS = $(AM_CPPFLAGS) -DINSTALLDIR=\"$(bindir)\"
+ recode_sr_latin_CPPFLAGS = $(AM_CPPFLAGS) -DINSTALLDIR=\"$(bindir)\"

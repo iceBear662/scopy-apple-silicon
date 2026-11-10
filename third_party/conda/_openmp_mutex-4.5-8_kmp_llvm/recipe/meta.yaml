@@ -1,0 +1,43 @@
+# This file created by conda-build 26.7.1
+# meta.yaml template originally from:
+# /Users/runner/work/1/s/recipe, last modified Sat Aug 29 23:32:04 2026
+# ------------------------------------------------
+
+package:
+  name: _openmp_mutex
+  version: '4.5'
+source:
+  path: /Users/runner/work/1/s/recipe
+build:
+  number: '8'
+  string: 8_kmp_llvm
+  always_include_files: null
+  ignore_run_exports:
+    - _openmp_mutex
+  run_exports:
+    - _openmp_mutex >=4.5
+requirements:
+  host: []
+  run:
+    - llvm-openmp >=9.0.1
+test:
+  requires:
+    - clang_osx-arm64 19.*
+    - clangxx_osx-arm64 19.*
+  commands: null
+  files:
+    - omp_hello.c
+about:
+  summary: OpenMP Implementation Mutex
+  license: BSD-3-Clause
+  license_file: LICENSE
+  home: https://github.com/conda-forge/openmp-feedstock
+extra:
+  recipe-maintainers:
+    - beckermr
+    - isuruf
+  final: true
+  copy_test_source_files: true
+  flow_run_id: azure_20260829.1.1
+  remote_url: https://github.com/conda-forge/_openmp_mutex-feedstock
+  sha: eda0a8708507ea0ffd6f4599470627893b3bed52

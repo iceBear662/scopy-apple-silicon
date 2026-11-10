@@ -1,0 +1,49 @@
+# This file created by conda-build 26.7.1
+# ------------------------------------------------
+
+package:
+  name: libgfortran
+  version: 16.2.0
+source:
+  - url:
+      - https://ftp.gnu.org/gnu/gcc/gcc-16.2.0/gcc-16.2.0.tar.gz
+      - https://mirrors.ocf.berkeley.edu/gnu/gcc/gcc-16.2.0/gcc-16.2.0.tar.gz
+    sha256: 071d00a097579e5ef7ce97fc4a9e58e73fd3503c0a013c765c970370a5a53b9b
+    patches:
+      - patches/0001-allow-commands-in-main-specfile.patch
+      - patches/0002-patch-zoneinfo_dir_override-to-point-to-our-tzdata.patch
+      - patches/macos/0002-Make-stdlib-libc-the-default-for-macos-platforms.patch
+      - patches/macos/0003-Find-macos-sysroot-by-calling-xcrun.patch
+      - patches/macos/0004-fix-malloc-error.patch
+      - patches/macos/gcc-16.2.0.diff
+  - url: https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz
+    sha256: 9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23
+    folder: zlib2
+build:
+  number: 7
+  string: h07b0088_7
+requirements:
+  run:
+    - libgfortran5 16.2.0 hdb7a957_7
+  run_constrained:
+    - libgfortran-ng ==16.2.0=*_7
+  build: []
+test:
+  commands:
+    - test -f ${PREFIX}/lib/libgfortran${SHLIB_EXT}
+about:
+  summary: The GNU Fortran Runtime Library
+  home: https://gcc.gnu.org/
+  license: GPL-3.0-only WITH GCC-exception-3.1
+extra:
+  feedstock-name: ctng-compilers
+  recipe-maintainers:
+    - beckermr
+    - isuruf
+    - timsnyder
+    - xhochy
+  final: true
+  copy_test_source_files: true
+  flow_run_id: azure_20260924.5.1
+  remote_url: https://github.com/conda-forge/ctng-compilers-feedstock
+  sha: 9130f5e7a99ff6de8041ce7b9542d5454e863689

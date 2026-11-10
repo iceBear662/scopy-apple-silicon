@@ -1,0 +1,38 @@
+{
+  "source": {
+    "commit": "438f13835ef65c8ff56a511532817575a04d7fa9",
+    "url": "https://github.com/analogdevicesinc/scopy.git"
+  },
+  "source/iio-emu": {
+    "commit": "765b71dd6fb69ec8dd651bc37d57f4511d793409",
+    "url": "https://github.com/analogdevicesinc/iio-emu.git"
+  },
+  "native/src/gnuradio": {
+    "commit": "1d29734d8a88f5ecb822e08ba73c3dad699258c8",
+    "url": "https://github.com/gnuradio/gnuradio.git"
+  },
+  "native/src/gr-m2k": {
+    "commit": "5dfacf945d6c598e682605609e4005bf422a5d5e",
+    "url": "https://github.com/analogdevicesinc/gr-m2k.git"
+  },
+  "native/src/gr-scopy": {
+    "commit": "a69ccb22578621a69acc187fc0d006b5a030a744",
+    "url": "https://github.com/analogdevicesinc/gr-scopy.git"
+  },
+  "native/src/libiio": {
+    "commit": "a0eca0d2bf10326506fb762f0eec14255b27bef5",
+    "url": "https://github.com/analogdevicesinc/libiio.git"
+  },
+  "native/src/libsigrokdecode": {
+    "commit": "42684e1fcded4a9200db47aef3c74193c5ca5870",
+    "url": "https://github.com/analogdevicesinc/libsigrokdecode.git"
+  },
+  "native/src/libtinyiiod": {
+    "commit": "956bce332b166144bf86664db155af3c1c49287a",
+    "url": "https://github.com/analogdevicesinc/libtinyiiod.git"
+  },
+  "native/src/qwt": {
+    "commit": "3b71f45916b8419116e1085a404bdec63b183c75",
+    "url": "https://github.com/cseci/qwt.git"
+  }
+}

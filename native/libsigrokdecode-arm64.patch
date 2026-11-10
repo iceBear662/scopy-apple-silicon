@@ -1,0 +1,29 @@
+diff --git a/srd.c b/srd.c
+index 10dfaf6..54250b1 100644
+--- a/srd.c
++++ b/srd.c
+@@ -238,6 +238,16 @@ SRD_API int srd_init(const char *path)
+ 	/* Initialize the Python interpreter. */
+ 	Py_InitializeEx(0);
+ 
++	/* A standalone Scopy bundle must not scan its build machine or user
++	 * decoder directories while importing the bundled Python modules. */
++	if (path && g_getenv("SCOPY_BUNDLED_DECODERS_ONLY")) {
++		if ((ret = srd_decoder_searchpath_add(path)) != SRD_OK) {
++			Py_Finalize();
++			return ret;
++		}
++		goto decoder_paths_ready;
++	}
++
+ 	/* Locations relative to the XDG system data directories. */
+ 	sys_datadirs = g_get_system_data_dirs();
+ 	for (i = g_strv_length((char **)sys_datadirs); i > 0; i--) {
+@@ -302,6 +312,7 @@ SRD_API int srd_init(const char *path)
+ 		g_strfreev(dir_list);
+ 	}
+ 
++decoder_paths_ready:
+ #if PY_VERSION_HEX < 0x03090000
+ 	/*
+ 	 * Initialize and acquire the Python GIL. In Python 3.7+ this

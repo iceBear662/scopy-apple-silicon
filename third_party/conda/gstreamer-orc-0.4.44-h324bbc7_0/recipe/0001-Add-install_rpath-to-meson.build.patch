@@ -1,0 +1,15 @@
+--- orc/meson.build
++++ orc/meson.build
+@@ -111,3 +111,4 @@
+   dependencies : orc_dependencies,
+-  install : true)
++  install : true,
++  install_rpath : join_paths(get_option('prefix'), get_option('libdir')))
+
+--- orc-test/meson.build
++++ orc-test/meson.build
+@@ -13,3 +13,4 @@
+   dependencies : [libm, orc_dep],
+-  install : true)
++  install : true,
++  install_rpath : join_paths(get_option('prefix'), get_option('libdir')))

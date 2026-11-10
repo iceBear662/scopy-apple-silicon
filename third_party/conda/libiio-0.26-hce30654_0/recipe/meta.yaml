@@ -1,0 +1,66 @@
+# This file created by conda-build 24.9.0
+# ------------------------------------------------
+
+package:
+  name: libiio
+  version: '0.26'
+source:
+  sha256: fb445fb860ef1248759f45d4273a4eff360534480ec87af64c6b8db3b99be7e5
+  url: https://github.com/analogdevicesinc/libiio/archive/v0.26.tar.gz
+build:
+  number: 0
+  run_exports:
+    - libiio-c >=0.26,<1.0a0
+  string: hce30654_0
+requirements:
+  build: []
+  run:
+    - libiio-c 0.26 h34e41b8_0
+    - pylibiio 0.26 py_0
+test:
+  commands:
+    - iio_info --help
+  imports:
+    - iio
+about:
+  description: 'libiio is used to interface to the Linux Industrial Input/Output (IIO)
+    Subsystem.
+
+    The Linux IIO subsystem is intended to provide support for devices that in some
+
+    sense are analog to digital or digital to analog converters (ADCs, DACs). This
+
+    includes, but is not limited to ADCs, Accelerometers, Gyros, IMUs, Capacitance
+    to
+
+    Digital Converters (CDCs), Pressure Sensors, Color, Light and Proximity Sensors,
+
+    Temperature Sensors, Magnetometers, DACs, DDS (Direct Digital Synthesis), PLLs
+
+    (Phase Locked Loops), Variable/Programmable Gain Amplifiers (VGA, PGA), and RF
+
+    transceivers. You can use libiio natively on an embedded Linux target (local mode),
+
+    or use libiio to communicate remotely to that same target from a host Linux,
+
+    Windows or MAC over USB or Ethernet or Serial.
+
+    '
+  dev_url: https://github.com/analogdevicesinc/libiio
+  doc_url: https://analogdevicesinc.github.io/libiio/
+  home: https://github.com/analogdevicesinc/libiio
+  license: LGPL-2.1-or-later AND GPL-3.0-or-later
+  license_family: LGPL
+  license_file:
+    - COPYING.txt
+    - COPYING_GPL.txt
+  summary: Library for interfacing with Linux IIO devices
+extra:
+  copy_test_source_files: true
+  feedstock-name: libiio
+  final: true
+  flow_run_id: azure_20241007.3.1
+  recipe-maintainers:
+    - ryanvolz
+  remote_url: https://github.com/conda-forge/libiio-feedstock
+  sha: 17b786d5224650a0bf9c2f474b4d5ff0ec201315

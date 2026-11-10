@@ -1,0 +1,131 @@
+{% set version = "3.2.0" %}
+{% set build_number = 0 %}
+
+package:
+  name: volk-split
+  version: {{ version }}
+
+source:
+  url: https://github.com/gnuradio/volk/releases/download/v{{ version }}/volk-{{ version }}.tar.gz
+  sha256: 9c6c11ec8e08aa37ce8ef7c5bcbdee60bac2428faeffb07d072e572ed05eb8cd
+  patches:
+    - 0001-Add-main-to-volk_modtool-script-usable-as-an-entry-p.patch
+
+build:
+  number: {{ build_number }}
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - {{ stdlib('c') }}
+    - cmake >=3.8
+    - gstreamer-orc  # [not win]
+    - mako >=0.4.2
+    - ninja
+    - pkg-config
+    # set constraint to avoid a matrix for different python versions
+    - python {{ python_min }}
+  host:
+    - gstreamer-orc  # [not win]
+
+outputs:
+  - name: volk
+    script: install_volk.bat  # [win]
+    script: install_volk.sh  # [not win]
+    build:
+      run_exports:
+        - {{ pin_subpackage('volk', max_pin='x.x') }}
+    requirements:
+      build:
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - {{ stdlib('c') }}
+        - cmake
+      host:
+        - gstreamer-orc  # [not win]
+      run:
+        - {{ pin_compatible('gstreamer-orc', max_pin='x.x') }}  # [not win]
+    test:
+      commands:
+        # verify CLI tools
+        - command -v volk-config-info  # [unix]
+        - command -v volk_profile  # [unix]
+        - where volk-config-info  # [win]
+        - where volk_profile  # [win]
+
+        # verify libraries
+        - test -f $PREFIX/lib/libvolk${SHLIB_EXT}  # [unix]
+        - if not exist %PREFIX%\\Library\\bin\\volk.dll exit 1  # [win]
+        - if not exist %PREFIX%\\Library\\lib\\volk.lib exit 1  # [win]
+
+        # run selection of commands
+        - volk-config-info --version --prefix --cc --cflags --all-machines --avail-machines --machine --alignment --malloc
+
+  - name: volk-modtool
+    script: install_volk_modtool.bat  # [win]
+    script: install_volk_modtool.sh  # [not win]
+    build:
+      string: py_{{ build_number }}
+      noarch: python
+      entry_points:
+        - volk_modtool = volk_modtool.__main__:main
+    requirements:
+      build:
+        - cmake
+      host:
+        - python {{ python_min }}
+      run:
+        - python >={{ python_min }}
+    test:
+      requires:
+        - python {{ python_min }}
+      commands:
+        - volk_modtool
+      imports:
+        - volk_modtool
+
+  - name: volk-dev
+    build:
+      run_exports:
+        - {{ pin_subpackage('volk', max_pin='x.x') }}
+    requirements:
+      run:
+        - {{ pin_subpackage('volk', exact=True) }}
+        - {{ pin_subpackage('volk-modtool', exact=True) }}
+    test:
+      commands:
+        - volk-config-info --version --prefix --cc --cflags --all-machines --avail-machines --machine --alignment --malloc
+        - volk_modtool
+      imports:
+        - volk_modtool
+
+about:
+  home: https://github.com/gnuradio/volk
+  license: LGPL-3.0-or-later AND Apache-2.0
+  license_file:
+    - COPYING
+    - LICENSE_CPU_FEATURES
+  summary: The Vector Optimized Library of Kernels
+  description: |
+    VOLK is the Vector-Optimized Library of Kernels. It is a free library,
+    currently offered under the GPLv3, that contains kernels of hand-written
+    SIMD code for different mathematical operations. Since each SIMD
+    architecture can be very different and no compiler has yet come along to
+    handle vectorization properly or highly efficiently, VOLK approaches the
+    problem differently.
+
+    For each architecture or platform that a developer wishes to vectorize for,
+    a new proto-kernel is added to VOLK. At runtime, VOLK will select the
+    correct proto-kernel. In this way, the users of VOLK call a kernel for
+    performing the operation that is platform/architecture agnostic. This
+    allows us to write portable SIMD code that is optimized for a variety of
+    platforms.
+
+  doc_url: http://libvolk.org/doxygen/index.html
+  dev_url: https://github.com/gnuradio/volk
+
+extra:
+  feedstock-name: volk
+  recipe-maintainers:
+    - ryanvolz

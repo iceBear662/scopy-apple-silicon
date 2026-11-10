@@ -1,0 +1,147 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e98c7c3..38b4957 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -28,7 +28,7 @@ else()
+ 	message(STATUS "Using default Python EXECUTABLE")
+ endif()
+ 
+-if(CMAKE_SYSTEM_PROCESSOR MATCHES arm)
++if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+ 	find_package(Python3 3.9 EXACT REQUIRED COMPONENTS Interpreter)
+ 	message (STATUS "Host Python Interpreter " ${Python3_EXECUTABLE})
+ 	set(Python3_EXECUTABLE ${CMAKE_SYSROOT}/bin/python3.9)
+@@ -192,7 +192,10 @@ find_package(Qt5UiTools REQUIRED)
+ find_package(Qt5Xml REQUIRED)
+ 
+ set(CMAKE_VERBOSE_MAKEFILE TRUE)
+-find_package(Gnuradio "3.10" REQUIRED COMPONENTS runtime analog blocks fft filter volk pmt iio)
++find_package(Gnuradio "3.10" REQUIRED COMPONENTS runtime analog blocks fft filter volk pmt)
++if(NOT TARGET gnuradio::gnuradio-iio)
++	find_package(gnuradio-iio CONFIG REQUIRED)
++endif()
+ 
+ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};/usr/local/lib/cmake)
+ find_package(gnuradio-scopy REQUIRED PATH_SUFFIXES scopy)
+diff --git a/src/main.cpp b/src/main.cpp
+index 3e0247f..65c45e4 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -108,6 +108,17 @@ int main(int argc, char **argv)
+ 	qputenv("PYTHONPATH", path_str.toLocal8Bit());
+ #endif
+ 
++#ifdef Q_OS_MACOS
++	// Relocatable embedded Python for the standalone Apple Silicon bundle.
++	QDir pythonHome(QCoreApplication::applicationDirPath() + "/../Resources/python");
++	if (pythonHome.exists("lib/" PYTHON_VERSION "/encodings")) {
++		qputenv("PYTHONHOME", pythonHome.absolutePath().toUtf8());
++		qunsetenv("PYTHONPATH");
++		qputenv("PYTHONDONTWRITEBYTECODE", "1");
++		qputenv("SCOPY_BUNDLED_DECODERS_ONLY", "1");
++	}
++#endif
++
+ 	QCoreApplication::setOrganizationName("ADI");
+ 	QCoreApplication::setOrganizationDomain("analog.com");
+ 	QCoreApplication::setApplicationName("Scopy");
+diff --git a/src/network_analyzer_api.cpp b/src/network_analyzer_api.cpp
+index 1b953f9..318ef52 100644
+--- a/src/network_analyzer_api.cpp
++++ b/src/network_analyzer_api.cpp
+@@ -274,19 +274,19 @@ void NetworkAnalyzer_API::setLineThickness(int index)
+ 
+ QList<double> NetworkAnalyzer_API::data() const
+ {
+-	QList<double> list = net->m_dBgraph.getXAxisData().toList();
++	QList<double> list = net->m_dBgraph.getYAxisData().toList();
+ 	return list;
+ }
+ 
+ QList<double> NetworkAnalyzer_API::freq() const
+ {
+-	QList<double> list = net->m_dBgraph.getYAxisData().toList();
++	QList<double> list = net->m_dBgraph.getXAxisData().toList();
+ 	return list;
+ }
+ 
+ QList<double> NetworkAnalyzer_API::phase() const
+ {
+-	QList<double> list = net->m_phaseGraph.getXAxisData().toList();
++	QList<double> list = net->m_phaseGraph.getYAxisData().toList();
+ 	return list;
+ }
+ 
+diff --git a/src/qtjs.cpp b/src/qtjs.cpp
+index 5956ece..5ea484f 100644
+--- a/src/qtjs.cpp
++++ b/src/qtjs.cpp
+@@ -58,8 +58,9 @@ void QtJs::exit()
+ 
+ void QtJs::returnToApplication()
+ {
+-	bool done;
+-	connect(getToolLauncherInstance(), &ToolLauncher::launcherClosed,[&done](){
++	bool done = false;
++	QObject connectionScope;
++	connect(getToolLauncherInstance(), &ToolLauncher::launcherClosed, &connectionScope, [&done](){
+ 		done=true;
+ 	});
+ 
+diff --git a/src/tool_launcher.cpp b/src/tool_launcher.cpp
+index 91ecd9a..bb1a66d 100644
+--- a/src/tool_launcher.cpp
++++ b/src/tool_launcher.cpp
+@@ -1457,7 +1457,9 @@ bool ToolLauncher::loadDecoders(QString path)
+ 	static bool srd_loaded = false;
+ 
+ 	if (srd_loaded) {
+-		srd_exit();
++		// Decoders are independent of the device context. Reinitializing
++		// CPython on every reconnect corrupts extension-module state (ctypes).
++		return srd_decoder_get_by_id("parallel") != nullptr;
+ 	}
+ 
+ 	if (srd_init(path.toStdString().c_str()) != SRD_OK) {
+@@ -1612,6 +1614,13 @@ QPair<bool, bool> adiscope::ToolLauncher::initialCalibration()
+ 		initialCalibrationFlag = true;
+ 		okc = calibrate();
+ 		initialCalibrationFlag = false;
++	} else {
++		// Tool creation is driven by these signals even when calibration
++		// was explicitly skipped by the scripting API.
++		okc.second = true;
++		Q_EMIT adcCalibrationDone();
++		Q_EMIT dacCalibrationDone();
++		Q_EMIT calibrationDone();
+ 	}
+ 
+ 	//	if (okc.first) {
+diff --git a/src/tool_launcher_api.cpp b/src/tool_launcher_api.cpp
+index 61caa31..bc7d2b1 100644
+--- a/src/tool_launcher_api.cpp
++++ b/src/tool_launcher_api.cpp
+@@ -117,6 +117,7 @@ bool ToolLauncher_API::connect(const QString& uri)
+ 	QPushButton *btn = nullptr;
+ 	bool did_connect = false;
+ 	bool done = false;
++	QObject connectionScope;
+ 
+ 	DeviceWidget* dev = nullptr;
+ 	for (auto d : tl->devices) {
+@@ -140,13 +141,13 @@ bool ToolLauncher_API::connect(const QString& uri)
+ 		}
+ 	}
+ 
+-	tl->connect(tl, &ToolLauncher::connectionDone,
++	tl->connect(tl, &ToolLauncher::connectionDone, &connectionScope,
+ 			[&](bool success) {
+ 		if (!success)
+ 			done = true;
+ 	});
+ 
+-	tl->connect(tl, &ToolLauncher::adcToolsCreated, [&]() {
++	tl->connect(tl, &ToolLauncher::adcToolsCreated, &connectionScope, [&]() {
+ 		did_connect = true;
+ 		done = true;
+ 	});

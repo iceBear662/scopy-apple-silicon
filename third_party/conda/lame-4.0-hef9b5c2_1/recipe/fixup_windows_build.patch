@@ -1,0 +1,98 @@
+--- a/Makefile.MSVC	2026-07-09 22:30:09
++++ b/Makefile.MSVC	2026-07-09 22:30:49
+@@ -98,8 +98,8 @@
+ SNDFILE = NO
+ !	ENDIF
+ 
+-OFF = win32
+-MACHINE = /machine:I386
++OFF = win64
++MACHINE = /machine:X64
+ LIB_OPTS = /nologo $(MACHINE) 
+ 
+ !	MESSAGE ----------------------------------------------------------------------
+@@ -204,9 +204,9 @@
+ 
+ # release options
+ !	IF "$(MSVCVER)" == "Win64"
+-CC_OPTS = /nologo /DWin64 /O2b2ity /GAy /Gs1024 /Zp8 /GL /GS- /Zi
++CC_OPTS = /nologo /DWin64 /O2b2ity /Gs1024 /Zp8 /GS-
+ !	ELSEIF "$(MSVCVER)" == "8.0"
+-CC_OPTS = /nologo /O2 /Wp64 /Oi /GL /arch:SSE /fp:precise
++CC_OPTS = /nologo /O2 /Wp64 /Oi /arch:SSE /fp:precise
+ !	ELSEif "$(CPU)"=="P6"
+ CC_OPTS = /nologo /O2 /Ob2 /GAy /Gs1024 /Zp8 /Zi
+ !else
+@@ -424,8 +424,8 @@
+ #__ Robert's alternate code ___________________________________________________
+ !	IF "$(CFG)" == "RH"
+ !	IF "$(MSVCVER)" == "8.0"
+-LIB_OPTS = $(LIB_OPTS) /LTCG
+-LN_OPTS = $(LN_OPTS) /LTCG
++LIB_OPTS = $(LIB_OPTS)
++LN_OPTS = $(LN_OPTS)
+ !   ENDIF
+ !	ENDIF
+ #___________________________________________________ Robert's alternate code __
+@@ -484,21 +484,12 @@
+ 	libmp3lame/presets.c \
+ 	libmp3lame/version.c
+ 
+-mpglib_sources = \
+-	mpglib/common.c \
+-	mpglib/dct64_i386.c \
+-	mpglib/decode_i386.c \
+-	mpglib/layer1.c \
+-	mpglib/layer2.c \
+-	mpglib/layer3.c \
+-	mpglib/tabinit.c \
+-	mpglib/interface.c
++# lame 3.101 removed the bundled mpglib decoder; decoding now goes through
++# the external libmpg123 provided by conda (see the HAVE_MPG123 define and
++# mpg123.lib linkage below).
++mpglib_sources =
+ 
+ 
+-!IF "$(MSVCVER)" == "Win64"
+-ADDL_OBJ = bufferoverflowU.lib
+-!ENDIF
+-
+ LIB_OBJ = $(lamelib_sources:.c=.obj)
+ HIP_OBJ = $(mpglib_sources:.c=.obj)
+ CMMN_OBJ = $(common_sources:.c=.obj)
+@@ -508,7 +499,7 @@
+ DLL_OBJ = $(dll_sources:.c=.obj)
+ 
+ .c.obj:
+-	@$(CC) $(CPP_OPTS) $(CC_SWITCHES) -Iinclude -Ilibmp3lame -Impglib \
++	@$(CC) $(CPP_OPTS) $(CC_SWITCHES) /DHAVE_MPG123 -Iinclude -Ilibmp3lame -Impglib -I"$(LIBRARY_PREFIX)\include" \
+ 	       $(CC_OUT)$@  -c $<
+ 
+ 
+@@ -544,7 +535,7 @@
+ .SUFFIXES : .nas
+ .nas.obj:
+ 	@echo $<
+-	@nasmw -f $(OFF) -i libmp3lame/i386/ -DWIN32 $< -o $@
++	@nasm -f $(OFF) -i libmp3lame/i386/ -DWIN32 -DWIN64 $< -o $@
+ 
+ CC_SWITCHES = $(CC_SWITCHES) /DHAVE_NASM
+ ASM_OBJ = $(ASM_OBJ) \
+@@ -618,6 +609,7 @@
+ $(T_LAME) : target_directory config.h $(T_LIB_STATIC) common $(LAME_OBJ) lame.res
+ 	@$(LN) $(LN_OUT)$(TARGET_DIR)$@ $(LN_SWITCHES) $(LIBSNDFILE) \
+ 	       $(TARGET_DIR)$(T_LIB_STATIC) $(CMMN_OBJ) $(LAME_OBJ) $(ADDL_OBJ) \
++	       "$(LIBRARY_PREFIX)\lib\mpg123.lib" \
+ 	       ./frontend/lame.res
+ 	@echo.
+ 	@echo --=*  $(TARGET_DIR)$@ ready  *=--
+@@ -652,7 +644,8 @@
+ 		/DEF:"include\lame.def" \
+ 		$(ADDL_OBJ) \
+ 		$(LN_OUT)"$(TARGET_DIR)$@" \
+-		$(TARGET_DIR)$(T_LIB_STATIC) libmp3lame\version.obj 
++		$(TARGET_DIR)$(T_LIB_STATIC) libmp3lame\version.obj \
++		"$(LIBRARY_PREFIX)\lib\mpg123.lib"
+ 	@echo.
+ 	@echo --=*  $(TARGET_DIR)$@ ready  *=--
+ 	@echo.

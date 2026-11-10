@@ -1,0 +1,161 @@
+# This file created by conda-build 26.3.0
+# ------------------------------------------------
+
+package:
+  name: fftw
+  version: 3.3.11
+source:
+  url: http://www.fftw.org/fftw-3.3.11.tar.gz
+  sha256: 5630c24cdeb33b131612f7eb4b1a9934234754f9f388ff8617458d0be6f239a1
+build:
+  string: nompi_haf1500d_100
+  run_exports:
+    - fftw >=3.3.11,<4.0a0
+  number: 100
+requirements:
+  build:
+    - _openmp_mutex 4.5 7_kmp_llvm
+    - autoconf 2.72 pl5321had7229c_1
+    - automake 1.17 pl5321h694c41f_0
+    - bzip2 1.0.8 h500dc9f_9
+    - c-ares 1.34.6 hb5e19a0_0
+    - ca-certificates 2026.2.25 hbd8a1cb_0
+    - cctools 1030.6.3 llvm19_1_h67a6458_4
+    - cctools_impl_osx-64 1030.6.3 llvm19_1_h7d82c7c_4
+    - cctools_impl_osx-arm64 1030.6.3 llvm19_1_h317eeb0_4
+    - cctools_osx-64 1030.6.3 llvm19_1_h8f0d4bb_4
+    - cctools_osx-arm64 1030.6.3 llvm19_1_h0e16ad9_4
+    - clang 19.1.7 default_h1323312_8
+    - clang-19 19.1.7 default_h9399c5b_8
+    - clang_impl_osx-64 19.1.7 default_ha1a018a_8
+    - clang_impl_osx-arm64 19.1.7 h4c5f930_31
+    - clang_osx-arm64 19.1.7 h877a2d5_31
+    - clangxx 19.1.7 default_h9089c59_8
+    - clangxx_impl_osx-64 19.1.7 default_ha1a018a_8
+    - clangxx_impl_osx-arm64 19.1.7 ha2d6da0_31
+    - clangxx_osx-arm64 19.1.7 h877a2d5_31
+    - cmake 3.31.8 h29fc008_0
+    - compiler-rt 19.1.7 he914875_1
+    - compiler-rt_osx-64 19.1.7 h138dee1_1
+    - gcc_impl_osx-64 15.2.0 h93e45a1_18
+    - gettext 0.25.1 he52a196_1
+    - gettext-tools 0.25.1 h3184127_1
+    - gfortran_impl_osx-64 15.2.0 h3603427_18
+    - gfortran_impl_osx-arm64 14.3.0 h1101521_1
+    - gfortran_osx-arm64 14.3.0 hda4becb_0
+    - gmp 6.3.0 hf036a51_2
+    - isl 0.26 imath32_h2e86a7b_101
+    - krb5 1.22.2 h207b36a_0
+    - ld64 956.6 llvm19_1_hc3792c1_4
+    - ld64_osx-64 956.6 llvm19_1_hcae3351_4
+    - ld64_osx-arm64 956.6 llvm19_1_hd5dc7e1_4
+    - libasprintf 0.25.1 h3184127_1
+    - libasprintf-devel 0.25.1 h3184127_1
+    - libclang-cpp19.1 19.1.7 default_h9399c5b_8
+    - libcurl 8.19.0 h8f0b9e4_0
+    - libcxx 22.1.3 h19cb2f5_0
+    - libcxx-devel 19.1.7 h7c275be_2
+    - libcxx-headers 19.1.7 h707e725_2
+    - libedit 3.1.20250104 pl5321ha958ccf_0
+    - libev 4.33 h10d778d_2
+    - libexpat 2.7.5 hcc62823_0
+    - libgcc 15.2.0 h08519bb_18
+    - libgcc-devel_osx-64 15.2.0 h49bd711_118
+    - libgettextpo 0.25.1 h3184127_1
+    - libgettextpo-devel 0.25.1 h3184127_1
+    - libgfortran-devel_osx-64 15.2.0 h306097a_1
+    - libgfortran-devel_osx-arm64 14.3.0 hc965647_1
+    - libgfortran5 15.2.0 hd16e46c_18
+    - libiconv 1.18 h57a12c2_2
+    - libintl 0.25.1 h3184127_1
+    - libintl-devel 0.25.1 h3184127_1
+    - libllvm19 19.1.7 h56e7563_2
+    - libltdl 2.4.3a h240833e_0
+    - liblzma 5.8.3 hbb4bfdb_0
+    - libnghttp2 1.68.1 h70048d4_0
+    - libsigtool 0.1.3 hc0f2934_0
+    - libssh2 1.11.1 hed3591d_0
+    - libtool 2.5.4 h240833e_0
+    - libuv 1.51.0 h58003a5_1
+    - libxml2 2.15.3 h0712280_0
+    - libxml2-16 2.15.3 h0d7f165_0
+    - libzlib 1.3.2 hbb4bfdb_2
+    - llvm-openmp 19.1.7 ha54dae1_1
+    - llvm-tools 19.1.7 hb0207f0_2
+    - llvm-tools-19 19.1.7 h879f4bc_2
+    - m4 1.4.21 hf3981d6_0
+    - macosx_deployment_target_osx-arm64 11.0 h214bdd9_7
+    - make 4.4.1 h00291cd_2
+    - mpc 1.4.0 h31caf2d_0
+    - mpfr 4.2.2 h31caf2d_0
+    - ncurses 6.5 h0622a9a_3
+    - openssl 3.6.2 hc881268_0
+    - perl 5.32.1 7_h10d778d_perl5
+    - rhash 1.4.6 h6e16a3a_1
+    - sdkroot_env_osx-arm64 26.0 ha3f98da_7
+    - sigtool-codesign 0.1.3 hc0f2934_0
+    - tapi 1600.0.11.8 h8d8e812_2
+    - zlib 1.3.2 hbb4bfdb_2
+    - zstd 1.5.7 h3eecb57_6
+  host:
+    - _openmp_mutex 4.5 7_kmp_llvm
+    - libcxx 22.1.3 h55c6f16_0
+    - libgcc 15.2.0 hcbb3090_18
+    - libgfortran 15.2.0 h07b0088_18
+    - libgfortran5 15.2.0 hdae7583_18
+    - llvm-openmp 19.1.7 hdb05f8b_1
+  run:
+    - __osx >=11.0
+    - libcxx >=19
+    - libgfortran
+    - libgfortran5 >=14.3.0
+    - llvm-openmp >=19.1.7
+test:
+  files:
+    - test_cmake.sh
+    - test_cmake/*
+  requires:
+    - clang_osx-arm64 19.*
+    - clangxx_osx-arm64 19.*
+    - cmake <4
+    - make
+    - python >=3
+  commands:
+    - test ! -f ${PREFIX}/lib/libfftw3f.a
+    - test ! -f ${PREFIX}/lib/libfftw3.a
+    - test ! -f ${PREFIX}/lib/libfftw3l.a
+    - test ! -f ${PREFIX}/lib/libfftw3f_threads.a
+    - test ! -f ${PREFIX}/lib/libfftw3_threads.a
+    - test ! -f ${PREFIX}/lib/libfftw3l_threads.a
+    - test ! -f ${PREFIX}/lib/libfftw3f_omp.a
+    - test ! -f ${PREFIX}/lib/libfftw3_omp.a
+    - test ! -f ${PREFIX}/lib/libfftw3l_omp.a
+    - test -f ${PREFIX}/include/fftw3.h
+    - python -c "import ctypes; ctypes.cdll[r'${PREFIX}/lib/libfftw3${SHLIB_EXT}']"
+    - python -c "import ctypes; ctypes.cdll[r'${PREFIX}/lib/libfftw3_threads${SHLIB_EXT}']"
+    - python -c "import ctypes; ctypes.cdll[r'${PREFIX}/lib/libfftw3f${SHLIB_EXT}']"
+    - python -c "import ctypes; ctypes.cdll[r'${PREFIX}/lib/libfftw3f_threads${SHLIB_EXT}']"
+    - python -c "import ctypes; ctypes.cdll[r'${PREFIX}/lib/libfftw3l${SHLIB_EXT}']"
+    - python -c "import ctypes; ctypes.cdll[r'${PREFIX}/lib/libfftw3l_threads${SHLIB_EXT}']"
+    - python -c "import ctypes; ctypes.cdll[r'${PREFIX}/lib/libfftw3_omp${SHLIB_EXT}']"
+    - python -c "import ctypes; ctypes.cdll[r'${PREFIX}/lib/libfftw3f_omp${SHLIB_EXT}']"
+    - python -c "import ctypes; ctypes.cdll[r'${PREFIX}/lib/libfftw3l_omp${SHLIB_EXT}']"
+    - bash test_cmake.sh
+about:
+  home: http://fftw.org
+  license: GPL-2.0-or-later
+  license_file: COPYING
+  summary: The fastest Fourier transform in the west.
+  dev_url: https://github.com/FFTW/fftw3
+extra:
+  recipe-maintainers:
+    - alexbw
+    - egpbos
+    - grlee77
+    - jakirkham
+    - jschueller
+  final: true
+  copy_test_source_files: true
+  flow_run_id: azure_20260421.2.1
+  remote_url: https://github.com/conda-forge/fftw-feedstock
+  sha: 9870d0670811b6a13d1933a1f0a0975675f87fb7

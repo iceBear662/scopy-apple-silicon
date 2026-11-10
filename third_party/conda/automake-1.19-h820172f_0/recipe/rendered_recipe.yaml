@@ -1,0 +1,204 @@
+recipe:
+  schema_version: 1
+  context:
+    name: automake
+    version: '1.19'
+  package:
+    name: automake
+    version: '1.19'
+  source:
+  - url: http://ftp.gnu.org/gnu/automake/automake-1.19.tar.gz
+    sha256: 79e8b1f7a967e87ce8a9ded76bee7f793d0ce1886ab2002feb1b0510f578b75a
+  build:
+    number: 0
+    string: h820172f_0
+    script: build.sh
+  requirements:
+    build:
+    - make
+    host:
+    - m4
+    - autoconf
+    - perl 5.*
+    - make
+    run:
+    - m4
+    - autoconf
+    - perl 5.*
+    ignore_run_exports:
+      from_package:
+      - perl
+  tests:
+  - script: automake --help
+  about:
+    homepage: http://www.gnu.org/software/automake/
+    repository: https://git.savannah.gnu.org/git/automake.git
+    documentation: https://www.gnu.org/software/automake/manual/automake.html
+    license: GPL-3.0-or-later
+    license_file:
+    - COPYING
+    summary: Tool for automatically generating Makefile.in files compliant with the GNU Coding Standards.
+    description: |-
+      Automake is a tool for automatically generating Makefile.ins from files
+      called Makefile.am.  It assumes that the project uses Autoconf and enforces
+      certain restrictions on the configure.ac contents.
+  extra:
+    recipe-maintainers:
+    - jakirkham
+    - ocefpaf
+    - mingwandroid
+build_configuration:
+  target_platform: osx-arm64
+  host_platform:
+    platform: osx-arm64
+    virtual_packages:
+    - __unix=0=0
+    - __osx=15.7.9=0
+    - __archspec=1=m2
+  build_platform:
+    platform: osx-arm64
+    virtual_packages:
+    - __unix=0=0
+    - __osx=15.7.9=0
+    - __archspec=1=m2
+  variant:
+    MACOSX_DEPLOYMENT_TARGET: '11.0'
+    channel_sources: conda-forge
+    channel_targets: conda-forge main
+    target_platform: osx-arm64
+  hash:
+    hash: 820172f
+  directories:
+    host_prefix: /Users/runner/miniforge3/conda-bld/bld/rattler-build_automake_1789036584/host_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_pla
+    build_prefix: /Users/runner/miniforge3/conda-bld/bld/rattler-build_automake_1789036584/build_env
+    work_dir: /Users/runner/miniforge3/conda-bld/bld/rattler-build_automake_1789036584/work
+    build_dir: /Users/runner/miniforge3/conda-bld/bld/rattler-build_automake_1789036584
+  channels:
+  - https://conda.anaconda.org/conda-forge
+  channel_priority: strict
+  solve_strategy: highest
+  timestamp: 2026-09-10T10:36:24.31067Z
+  subpackages:
+    automake:
+      name: automake
+      version: '1.19'
+      build_string: h820172f_0
+  packaging_settings:
+    archive_type: conda
+    compression_level: 15
+finalized_dependencies:
+  build:
+    specs:
+    - source: make
+    resolved:
+    - build: h84a0fba_3
+      build_number: 3
+      depends:
+      - __osx >=11.0
+      license: GPL-3.0-or-later
+      license_family: GPL
+      md5: 5e4c7921fa8489236f1599274b478bac
+      name: make
+      run_exports: {}
+      sha256: 36c769a71cfd0222de8114a6016f1def3d0411a6202aa811bca50e581450f71f
+      size: 275107
+      subdir: osx-arm64
+      timestamp: 1785879985161
+      version: 4.4.1
+      fn: make-4.4.1-h84a0fba_3.conda
+      url: https://conda.anaconda.org/conda-forge/osx-arm64/make-4.4.1-h84a0fba_3.conda
+      channel: https://conda.anaconda.org/conda-forge/
+  host:
+    specs:
+    - source: m4
+    - source: autoconf
+    - source: perl 5.*
+    - source: make
+    resolved:
+    - build: h84a0fba_0
+      build_number: 0
+      depends:
+      - __osx >=11.0
+      license: GPL-3.0-or-later
+      license_family: GPL
+      md5: 77e47f9e6de8d98e3a6c4752998e92de
+      name: m4
+      run_exports: {}
+      sha256: 2b8222694c7be372bde7ff3b971b7f606b22d01fc5ab106259192cf6a2461855
+      size: 234333
+      subdir: osx-arm64
+      timestamp: 1770423104357
+      version: 1.4.21
+      fn: m4-1.4.21-h84a0fba_0.conda
+      url: https://conda.anaconda.org/conda-forge/osx-arm64/m4-1.4.21-h84a0fba_0.conda
+      channel: https://conda.anaconda.org/conda-forge/
+    - build: pl5321hd3c70e0_1
+      build_number: 1
+      depends:
+      - __osx >=11.0
+      - m4
+      - perl 5.*
+      license: GPL-3.0-or-later
+      license_family: GPL
+      md5: 541363825691b203463e1d4feed4de1b
+      name: autoconf
+      run_exports: {}
+      sha256: 02d2581b44b289ace2c5408a831a9486e512f24eb9e8e1c38f5a4054f3d95920
+      size: 651441
+      subdir: osx-arm64
+      timestamp: 1747237289167
+      version: '2.72'
+      fn: autoconf-2.72-pl5321hd3c70e0_1.conda
+      url: https://conda.anaconda.org/conda-forge/osx-arm64/autoconf-2.72-pl5321hd3c70e0_1.conda
+      channel: https://conda.anaconda.org/conda-forge/
+    - build: 7_h4614cfb_perl5
+      build_number: 7
+      depends: []
+      license: GPL-1.0-or-later OR Artistic-1.0-Perl
+      md5: ba3cbe93f99e896765422cc5f7c3a79e
+      name: perl
+      run_exports:
+        weak:
+        - perl >=5.32.1,<5.33.0a0 *_perl5
+        noarch:
+        - perl >=5.32.1,<6.0a0 *_perl5
+      sha256: b0c55040d2994fd6bf2f83786561d92f72306d982d6ea12889acad24a9bf43b8
+      size: 14439531
+      subdir: osx-arm64
+      timestamp: 1703311335652
+      version: 5.32.1
+      fn: perl-5.32.1-7_h4614cfb_perl5.conda
+      url: https://conda.anaconda.org/conda-forge/osx-arm64/perl-5.32.1-7_h4614cfb_perl5.conda
+      channel: https://conda.anaconda.org/conda-forge/
+    - build: h84a0fba_3
+      build_number: 3
+      depends:
+      - __osx >=11.0
+      license: GPL-3.0-or-later
+      license_family: GPL
+      md5: 5e4c7921fa8489236f1599274b478bac
+      name: make
+      run_exports: {}
+      sha256: 36c769a71cfd0222de8114a6016f1def3d0411a6202aa811bca50e581450f71f
+      size: 275107
+      subdir: osx-arm64
+      timestamp: 1785879985161
+      version: 4.4.1
+      fn: make-4.4.1-h84a0fba_3.conda
+      url: https://conda.anaconda.org/conda-forge/osx-arm64/make-4.4.1-h84a0fba_3.conda
+      channel: https://conda.anaconda.org/conda-forge/
+  run:
+    depends:
+    - source: m4
+    - source: autoconf
+    - source: perl 5.*
+    constraints: []
+finalized_sources:
+- url: http://ftp.gnu.org/gnu/automake/automake-1.19.tar.gz
+  sha256: 79e8b1f7a967e87ce8a9ded76bee7f793d0ce1886ab2002feb1b0510f578b75a
+system_tools:
+  rattler-build: 0.76.0
+extra_meta:
+  flow_run_id: azure_20260910.3.1
+  remote_url: https://github.com/conda-forge/automake-feedstock
+  sha: 1fbf4f768624a3194f001e467724743d559a552b

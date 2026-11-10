@@ -1,0 +1,63 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Ryan Volz <ryan.volz@gmail.com>
+Date: Thu, 20 May 2021 12:29:10 -0400
+Subject: [PATCH] Query Python EXT_SUFFIX to set the extension suffix.
+
+This adds the python implementation, major and minor version numbers,
+and any additional flags (debug, pymalloc, wide unicode) to the
+extension module suffix as specified in PEP 3149.
+
+This fixes importing the Python extension when compiled for PyPy.
+
+Signed-off-by: Ryan Volz <ryan.volz@gmail.com>
+---
+ bindings/python/CMakeLists.txt   | 13 ++++++++++++-
+ bindings/python/setup.py.cmakein |  2 +-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/bindings/python/CMakeLists.txt b/bindings/python/CMakeLists.txt
+index f0d1072..f1f2443 100644
+--- a/bindings/python/CMakeLists.txt
++++ b/bindings/python/CMakeLists.txt
+@@ -136,13 +136,24 @@ if(NOT APPLE)
+ endif()
+ 
+ set(PYTHON_EXECUTABLE_LIB_VERSION ${Python_EXECUTABLE})
++
++execute_process(
++	COMMAND "${PYTHON_EXECUTABLE_LIB_VERSION}" -c
++	"from distutils.sysconfig import get_config_var; print(get_config_var('EXT_SUFFIX'))"
++	OUTPUT_VARIABLE PYTHON_EXTENSION_SUFFIX
++)
++string(STRIP ${PYTHON_EXTENSION_SUFFIX} PYTHON_EXTENSION_SUFFIX)
++if(${PYTHON_EXTENSION_SUFFIX} STREQUAL "None")
++	set(PYTHON_EXTENSION_SUFFIX ${CMAKE_SHARED_MODULE_SUFFIX})
++endif()
++set_target_properties(${SWIG_OUTPUT_NAME} PROPERTIES SUFFIX ${PYTHON_EXTENSION_SUFFIX})
++
+ if(UNIX)
+ 	if(NOT APPLE)
+ 		set_target_properties(${SWIG_OUTPUT_NAME} PROPERTIES
+ 			INSTALL_RPATH	"$ORIGIN")
+ 	else()
+ 		set_target_properties(${SWIG_OUTPUT_NAME} PROPERTIES
+-			SUFFIX ".so"
+ 			INSTALL_RPATH	"@loader_path")
+ #		set_property(TARGET ${SWIG_MODULE_pyBar_REAL_NAME} APPEND PROPERTY
+ #			LINK_FLAGS "-flat_namespace -undefined suppress")
+diff --git a/bindings/python/setup.py.cmakein b/bindings/python/setup.py.cmakein
+index 51eea68..a17263c 100644
+--- a/bindings/python/setup.py.cmakein
++++ b/bindings/python/setup.py.cmakein
+@@ -59,7 +59,7 @@ else:
+         url='https://github.com/analogdevicesinc/libm2k',
+         py_modules = ["${PROJECT_NAME}"],
+         packages=[''],
+-        package_data={'': ['_${PROJECT_NAME}.so', '_${PROJECT_NAME}.pyd']},
++        package_data={'': ['_${PROJECT_NAME}${PYTHON_EXTENSION_SUFFIX}']},
+         classifiers=[
+                 "Programming Language :: Python :: 3",
+                 "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
+-- 
+2.42.0
+

@@ -1,0 +1,81 @@
+schema_version: 1
+
+context:
+  name: markupsafe
+  version: "3.0.4"
+
+package:
+  name: markupsafe
+  version: ${{ version }}
+
+source:
+  url: https://files.pythonhosted.org/packages/source/${{ name[0] }}/${{ name }}/${{ name }}-${{ version }}.tar.gz
+  sha256: 2e9ad7dd851bf45fab9f75cbff4cb493fee9979e8d8c7c9c3ee119022518edd6
+
+build:
+  number: 4
+  noarch: ${{ "python" if use_noarch }}
+  variant:
+    down_prioritize_variant: ${{ 1 if use_noarch else 0 }}
+  script:
+    - if: use_noarch
+      then: sed -i.bak 's/supports_speedups = /supports_speedups = False and /g' setup.py
+    - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+
+requirements:
+  build:
+    - if: not use_noarch
+      then:
+        - if: build_platform != target_platform
+          then:
+            - python
+            - cross-python_${{ target_platform }}
+        - ${{ compiler('c') }}
+        - ${{ stdlib("c") }}
+  host:
+    - if: use_noarch
+      then: python ${{ python_min }}.*
+      else: python
+    - pip
+    - setuptools >=77
+  run:
+    - if: use_noarch
+      then: python >=${{ python_min }}
+      else: python
+  run_constraints:
+    - jinja2 >=3.0.0
+
+tests:
+  - if: use_noarch
+    then:
+      - python:
+          imports:
+            - markupsafe
+          pip_check: true
+          python_version: ${{ python_min }}.*
+    else:
+      - python:
+          imports:
+            - markupsafe
+          pip_check: true
+
+about:
+  license: BSD-3-Clause
+  license_file: LICENSE.txt
+  summary: Safely add untrusted strings to HTML/XML markup.
+  description: |
+    MarkupSafe implements a text object that escapes characters so it is
+    safe to use in HTML and XML. Characters that have special meanings are
+    replaced so that they display as the actual characters. This mitigates
+    injection attacks, meaning untrusted user input can safely be displayed
+    on a page.
+  homepage: https://www.palletsprojects.com/p/markupsafe
+  repository: https://github.com/pallets/markupsafe
+  documentation: https://markupsafe.palletsprojects.com/
+
+extra:
+  recipe-maintainers:
+    - xylar
+    - pelson
+    - scopatz
+    - ocefpaf

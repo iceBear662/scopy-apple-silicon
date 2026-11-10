@@ -1,0 +1,113 @@
+From 7d231a8e15d119942c48474fb30a66b5cbbf847b Mon Sep 17 00:00:00 2001
+From: Isuru Fernando <isuruf@gmail.com>
+Date: Thu, 24 Sep 2026 19:27:47 -0400
+Subject: [PATCH] Make userelocatableinc work on Windows
+
+Relocate .../ entries in @INC relative to the perl DLL location
+(w32_module_name, which uses forward slashes) instead of $^X, and make
+Config's relocation of otherlibdirs use ';' and handle backslashes in
+$^X on Windows.
+---
+ configpm | 14 ++++++++------
+ perl.c   | 19 ++++++++++++++++++-
+ 2 files changed, 26 insertions(+), 7 deletions(-)
+
+diff --git a/configpm b/configpm
+index 0c46b9e..7c82b55 100755
+--- a/configpm
++++ b/configpm
+@@ -434,12 +434,15 @@ if (fetch_string({}, 'otherlibdirs') =~ m!\.\.\./!) {
+     $need_relocation{otherlibdirs} = 'otherlibdirs';
+ }
+ 
++my $libdir_sep = fetch_string({}, 'osname') eq 'MSWin32' ? ';' : ':';
++
+ my $relocation_code = uncomment <<'EOT';
+ #
+ #    sub relocate_inc {
+ #      my $libdir = shift;
+ #      return $libdir unless $libdir =~ s!^\.\.\./!!;
+ #      my $prefix = $^X;
++#      $prefix =~ tr!\\!/! if $^O eq 'MSWin32';
+ #      if ($prefix =~ s!/[^/]*$!!) {
+ #        while ($libdir =~ m!^\.\./!) {
+ #          # Loop while $libdir starts "../" and $prefix still has a trailing
+@@ -632,13 +635,12 @@ $heavy_txt .= 'foreach my $what (qw(' . join (' ', @need_relocation) .
+ #        s/^($what=)(['"])(.*?)\2/$1 . $2 . relocate_inc($3) . $2/me;
+ #    }
+ EOT
+-# Currently it only makes sense to do the ... relocation on Unix, so there's
+-# no need to emulate the "which separator for this platform" logic in perl.c -
+-# ':' will always be applicable
++# Emulate the "which separator for this platform" logic in perl.c -
++# ';' on Windows, ':' elsewhere
+ if ($need_relocation{otherlibdirs}) {
+-$heavy_txt .= uncomment << 'EOT';
++$heavy_txt .= sprintf uncomment(<< 'EOT'), $libdir_sep, $libdir_sep;
+ #    s{^(otherlibdirs=)(['"])(.*?)\2}
+-#     {$1 . $2 . join ':', map {relocate_inc($_)} split ':', $3 . $2}me;
++#     {$1 . $2 . join '%s', map {relocate_inc($_)} split '%s', $3 . $2}me;
+ EOT
+ }
+ }
+@@ -854,7 +856,7 @@ foreach my $key (keys %Common) {
+ 	$value =~ s!'!\\'!g;
+ 	$value = "'$value'";
+ 	if ($key eq 'otherlibdirs') {
+-	    $value = "join (':', map {relocate_inc(\$_)} split (':', $value))";
++	    $value = "join ('$libdir_sep', map {relocate_inc(\$_)} split ('$libdir_sep', $value))";
+ 	} elsif ($need_relocation{$key}) {
+ 	    $value = "relocate_inc($value)";
+ 	}
+diff --git a/perl.c b/perl.c
+index 59dd10f..fbb525b 100644
+--- a/perl.c
++++ b/perl.c
+@@ -5041,6 +5041,11 @@ S_incpush_if_exists(pTHX_ AV *const av, SV *dir, SV *const stem)
+ }
+ #endif
+ 
++#if defined(WIN32) && defined(PERL_RELOCATABLE_INC)
++EXTERN_C char w32_module_name[];
++EXTERN_C void set_w32_module_name(void);
++#endif
++
+ static SV *
+ S_mayberelocate(pTHX_ const char *const dir, STRLEN len, U32 flags)
+ {
+@@ -5098,19 +5103,31 @@ S_mayberelocate(pTHX_ const char *const dir, STRLEN len, U32 flags)
+             STRLEN libpath_len = SvCUR(libdir);
+             if (memBEGINs(libpath, libpath_len, ".../")) {
+                 /* Game on!  */
+-                SV * const caret_X = get_sv("\030", 0);
+                 /* Going to use the SV just as a scratch buffer holding a C
+                    string:  */
+                 SV *prefix_sv;
+                 char *prefix;
+                 char *lastslash;
+ 
++#ifdef WIN32
++                /* On Windows, relocate relative to the perl DLL instead of
++                   $^X. w32_module_name is an absolute path normalized to
++                   forward slashes, whereas $^X uses backslashes. It also
++                   works when perl.exe has been copied elsewhere but still
++                   loads the DLL from its installed location.  */
++                if (!*w32_module_name)
++                    set_w32_module_name();
++                prefix_sv = newSVpv(w32_module_name, 0);
++#else
++                SV * const caret_X = get_sv("\030", 0);
++
+                 /* $^X is *the* source of taint if tainting is on, hence
+                    SvPOK() won't be true.  */
+                 assert(caret_X);
+                 assert(SvPOKp(caret_X));
+                 prefix_sv = newSVpvn_flags(SvPVX(caret_X), SvCUR(caret_X),
+                                            SvUTF8(caret_X));
++#endif
+                 /* Firstly take off the leading .../
+                    If all else fail we'll do the paths relative to the current
+                    directory.  */
+-- 
+2.53.GIT
+

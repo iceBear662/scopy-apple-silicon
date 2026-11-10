@@ -1,0 +1,31 @@
+From 37a9df5253244baa70ed65969d93828d502f3cc2 Mon Sep 17 00:00:00 2001
+From: Marcel Bargull <marcel.bargull@udo.edu>
+Date: Fri, 22 Dec 2023 15:46:57 +0100
+Subject: [PATCH 2/2] Disable direct invocation of linker if LD is set
+
+It's apparent that lddlflags is just as ldflags something to be used
+when invoking the linker through the compiler.
+
+Removing the direct usage of the linker if the LD environment variable
+is set (by our compiler/linker activation packages) fixes
+https://github.com/conda-forge/perl-feedstock/issues/59#issuecomment-1623967103
+.
+
+Signed-off-by: Marcel Bargull <marcel.bargull@udo.edu>
+---
+ dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Base.pm | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Base.pm b/dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Base.pm
+index 638014352c..5251257b55 100644
+--- a/dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Base.pm
++++ b/dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Base.pm
+@@ -41,7 +41,7 @@ sub new {
+      if defined $ENV{CFLAGS};
+   $self->{config}{cxx} = $ENV{CXX} if defined $ENV{CXX};
+   $self->{config}{cxxflags} = $ENV{CXXFLAGS} if defined $ENV{CXXFLAGS};
+-  $self->{config}{ld} = $ENV{LD} if defined $ENV{LD};
++  # $self->{config}{ld} = $ENV{LD} if defined $ENV{LD};
+   $self->{config}{ldflags} = join(" ", $self->{config}{ldflags}, $ENV{LDFLAGS})
+      if defined $ENV{LDFLAGS};
+ 

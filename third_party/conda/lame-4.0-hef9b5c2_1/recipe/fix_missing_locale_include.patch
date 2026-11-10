@@ -1,0 +1,22 @@
+--- a/frontend/parse.c
++++ b/frontend/parse.c
+@@ -67,13 +67,16 @@
+ #endif
+ 
+                  
+-#ifdef HAVE_ICONV
+-#include <iconv.h>
+-#include <errno.h>
++/* locale.h/langinfo.h are needed for the setlocale(LC_CTYPE, ...) call below,
++ * which is guarded by HAVE_LANGINFO_H alone -- include them independently of
++ * HAVE_ICONV so the build works when iconv is absent. */
+ #ifdef HAVE_LANGINFO_H
+ #include <locale.h>
+ #include <langinfo.h>
+ #endif
++#ifdef HAVE_ICONV
++#include <iconv.h>
++#include <errno.h>
+ #if defined(__KLIBC__) && !defined(iconv_open)
+ /* kLIBC iconv_open() does not support UTF-16LE and //TRANSLIT */
+ static iconv_t os2_iconv_open (const char *tocode, const char *fromcode)

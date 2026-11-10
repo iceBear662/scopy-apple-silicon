@@ -1,0 +1,354 @@
+{% set version = "1.0" %}
+
+# Note: as of 0.23.1, we have given up on trying to build gettext on Windows
+# with MSVC -- there are new patterns that may make it simply impossible due to
+# the ways that some DLL-exported variables are used. See discussion in #35. It
+# *is* possible to build gettext on Windows using MinGW/GCC -- see #34. But for
+# now we would rather turn off the Windows build than undertake the major
+# migration that a switch to GCC would entail.
+#
+# The Windows build files and configuration were removed from this recipe
+# in 1.0; they can be recovered from the git history if needed.
+
+package:
+  name: gettext-split
+  version: "{{ version }}"
+
+source:
+  url: https://ftp.gnu.org/pub/gnu/gettext/gettext-{{ version }}.tar.xz
+  sha256: 71132a3fb71e68245b8f2ac4e9e97137d3e5c02f415636eb508ae607bc01add7
+
+build:
+  number: 0
+  skip: true  # [win]
+
+requirements:
+  build:
+    - {{ stdlib('c') }}
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - make
+  host:
+    - libiconv
+    # With libcurl and json-c, 'spit' (used by msgpre) is built as a C program
+    # instead of being installed as a Python script that needs requests.
+    - libcurl
+    - json-c
+    # libtextstyle uses terminfo for styled output
+    - ncurses
+
+
+outputs:
+  - name: libintl
+    build:
+      skip: true  # [linux]
+      run_exports:
+        # Seems pretty good: https://abi-laboratory.pro/tracker/timeline/gettext/
+        - {{ pin_subpackage('libintl') }}
+      ignore_run_exports_from:
+        - {{ compiler('cxx') }}
+    script: install-libintl.sh
+    requirements:
+      build:
+        - {{ stdlib('c') }}
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - make
+      host:
+        - libiconv
+    test:
+      commands:
+        # Only the actual binary (versioned) variant should be in this package
+        - test -f ${PREFIX}/lib/libintl.*.dylib                   # [osx]
+        - test -f ${PREFIX}/lib/libintl.so.*                      # [linux]
+        # The unversioned variants should be in the -devel package.
+        - test ! -f ${PREFIX}/lib/libintl$SHLIB_EXT
+        - test ! -f ${PREFIX}/include/libintl.h                   # [osx]
+    about:
+      home: https://www.gnu.org/software/gettext/
+      license: LGPL-2.1-or-later
+      license_file: COPYING
+      summary: library that provides native language support to programs
+
+  - name: libintl-devel
+    build:
+      skip: true  # [linux]
+      run_exports:
+        # Seems pretty good: https://abi-laboratory.pro/tracker/timeline/gettext/
+        - {{ pin_subpackage('libintl') }}
+      ignore_run_exports_from:
+        - {{ compiler('cxx') }}
+    script: install-libintl-devel.sh
+    requirements:
+      build:
+        - {{ stdlib('c') }}
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - make
+      host:
+        - libiconv
+        - {{ pin_subpackage('libintl', exact=true) }}
+      run:
+        - {{ pin_subpackage('libintl', exact=true) }}
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libintl${SHLIB_EXT}                   # [osx]
+        - test -f ${PREFIX}/include/libintl.h                         # [osx]
+    about:
+      home: https://www.gnu.org/software/gettext/
+      license: LGPL-2.1-or-later
+      license_file: COPYING
+      summary: library that provides native language support to programs
+
+  - name: libasprintf
+    build:
+      run_exports:
+        # Seems pretty good: https://abi-laboratory.pro/tracker/timeline/gettext/
+        - {{ pin_subpackage('libasprintf') }}
+      ignore_run_exports:
+        - libiconv
+    script: install-asprintf.sh
+    requirements:
+      build:
+        - {{ stdlib('c') }}
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - make
+      host:
+        - libiconv
+    test:
+      commands:
+        # Only the actual binary (versioned) variant should be in this package
+        - test -f ${PREFIX}/lib/libasprintf.*.dylib                   # [osx]
+        - test -f ${PREFIX}/lib/libasprintf.so.0                      # [linux]
+        # The unversioned variants should be in the -devel package.
+        - test ! -f ${PREFIX}/lib/libasprintf$SHLIB_EXT
+    about:
+      home: https://www.gnu.org/software/gettext/
+      license: LGPL-2.1-or-later
+      license_file: COPYING
+      summary: C-style formatted output in C++
+
+  - name: libasprintf-devel
+    build:
+      run_exports:
+        # Seems pretty good: https://abi-laboratory.pro/tracker/timeline/gettext/
+        - {{ pin_subpackage('libasprintf') }}
+      ignore_run_exports_from:
+        - {{ compiler('cxx') }}
+      ignore_run_exports:
+        - libiconv
+    script: install-asprintf-devel.sh
+    requirements:
+      build:
+        - {{ stdlib('c') }}
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - make
+      host:
+        - libiconv
+        - {{ pin_subpackage('libasprintf', exact=True) }}
+      run:
+        - {{ pin_subpackage('libasprintf', exact=True) }}
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libasprintf${SHLIB_EXT}
+    about:
+      home: https://www.gnu.org/software/gettext/
+      license: LGPL-2.1-or-later
+      license_file: COPYING
+      summary: Decomposed printf argument list
+
+  - name: libgettextpo
+    build:
+      run_exports:
+        # Seems pretty good: https://abi-laboratory.pro/tracker/timeline/gettext/
+        - {{ pin_subpackage('libgettextpo') }}
+      ignore_run_exports_from:
+        - {{ compiler('cxx') }}
+    script: install-libgettextpo.sh
+    requirements:
+      build:
+        - {{ stdlib('c') }}
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - make
+      host:
+        - {{ pin_subpackage('libintl', exact=True) }}  # [not linux]
+        - libiconv
+      run:
+        - {{ pin_subpackage('libintl', exact=True) }}  # [not linux]
+    test:
+      commands:
+        # Only the actual binary (versioned) variant should be in this package
+        - test -f ${PREFIX}/lib/libgettextpo.*.dylib                   # [osx]
+        - test -f ${PREFIX}/lib/libgettextpo.so.0                      # [linux]
+        # The unversioned variants should be in the -devel package.
+        - test ! -f ${PREFIX}/lib/libgettextpo$SHLIB_EXT
+    about:
+      home: https://www.gnu.org/software/gettext/
+      license: GPL-3.0-or-later
+      license_file: COPYING
+      summary: library for interfacing programmatically with GNU gettext .po files
+
+  - name: libgettextpo-devel
+    build:
+      run_exports:
+        # Seems pretty good: https://abi-laboratory.pro/tracker/timeline/gettext/
+        - {{ pin_subpackage('libgettextpo') }}
+      ignore_run_exports_from:
+        - {{ compiler('cxx') }}
+    script: install-libgettextpo-devel.sh
+    requirements:
+      build:
+        - {{ stdlib('c') }}
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - make
+      host:
+        - {{ pin_subpackage('libintl', exact=True) }}  # [not linux]
+        - {{ pin_subpackage('libgettextpo', exact=True) }}
+        - libiconv
+      run:
+        - {{ pin_subpackage('libintl', exact=True) }}  # [not linux]
+        - {{ pin_subpackage('libgettextpo', exact=True) }}
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libgettextpo$SHLIB_EXT
+    about:
+      home: https://www.gnu.org/software/gettext/
+      license: GPL-3.0-or-later
+      license_file: COPYING
+      summary: library for interfacing programmatically with GNU gettext .po files
+
+  - name: gettext-tools
+    script: install-gettext.sh
+    build:
+      ignore_run_exports_from:
+        - {{ compiler('cxx') }}
+    requirements:
+      build:
+        - {{ stdlib('c') }}
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - make
+      host:
+        - libiconv
+        # For the C version of 'spit'
+        - libcurl
+        - json-c
+        # libtextstyle uses terminfo for styled output
+        - ncurses
+        - {{ pin_subpackage('libintl', exact=True) }}  # [not linux]
+        - {{ pin_subpackage('libasprintf', exact=True ) }}
+        - {{ pin_subpackage('libgettextpo', exact=True ) }}
+        # Devel packages are included for deduplication-purposes only
+        - {{ pin_subpackage('libintl-devel', exact=True) }}  # [not linux]
+        - {{ pin_subpackage('libasprintf-devel', exact=True ) }}
+        - {{ pin_subpackage('libgettextpo-devel', exact=True ) }}
+      run:
+        - {{ pin_subpackage('libintl', exact=True) }}  # [not linux]
+    test:
+      files:
+        - an.po
+      commands:
+        - gettext --version
+        - ngettext --version
+        - printf_gettext --version
+        - printf_ngettext --version
+        - envsubst --version
+        - msgcmp --version
+        - msgfmt --version
+        - msgmerge --version
+        - msgunfmt --version
+        - xgettext --version
+        - msgattrib --version
+        - msgcat --version
+        - msgcomm --version
+        - msgconv --version
+        - msgen --version
+        - msgexec --version
+        - msgfilter --version
+        - msggrep --version
+        - msginit --version
+        - msgpre --version
+        - msguniq --version
+        - recode-sr-latin --version
+        - autopoint --version
+        - gettextize --version
+        - po-fetch --version
+        - test -f ${PREFIX}/bin/gettext.sh
+        # 'spit' must be the C program, not the Python fallback script
+        - spit --version
+        - test "$(head -c 2 ${PREFIX}/bin/spit)" != "#!"
+        - msgfmt -o an.gmo an.po
+    about:
+      home: https://www.gnu.org/software/gettext/
+      # The binaries of gettext are the GPL-3.0 licensed part.
+      license: GPL-3.0-or-later
+      license_file: COPYING
+      summary: Internationalization package (executable tools)
+
+  - name: gettext
+    build:
+      # Required to make overdepending checks pass.
+      ignore_run_exports:
+        - libintl
+        - libasprintf
+        - libgettextpo
+      run_exports:
+        # Seems pretty good: https://abi-laboratory.pro/tracker/timeline/gettext/
+        - {{ pin_subpackage('libintl') }}  # [not linux]
+        - {{ pin_subpackage('libasprintf') }}
+        - {{ pin_subpackage('libgettextpo') }}
+    script: install-gettext.sh
+    requirements:
+      build:
+        - {{ stdlib('c') }}
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - make
+      host:
+        - libiconv
+        - {{ pin_subpackage('gettext-tools', exact=True) }}
+        - {{ pin_subpackage('libintl-devel', exact=True) }}  # [not linux]
+        - {{ pin_subpackage('libintl', exact=True) }}  # [not linux]
+        - {{ pin_subpackage('libasprintf-devel', exact=True ) }}
+        - {{ pin_subpackage('libasprintf', exact=True ) }}
+        - {{ pin_subpackage('libgettextpo-devel', exact=True ) }}
+        - {{ pin_subpackage('libgettextpo', exact=True ) }}
+      run:
+        - {{ pin_subpackage('gettext-tools', exact=True) }}
+        - {{ pin_subpackage('libintl-devel', exact=True) }}  # [not linux]
+        - {{ pin_subpackage('libintl', exact=True) }}  # [not linux]
+        - {{ pin_subpackage('libasprintf-devel', exact=True ) }}
+        - {{ pin_subpackage('libasprintf', exact=True ) }}
+        - {{ pin_subpackage('libgettextpo-devel', exact=True ) }}
+        - {{ pin_subpackage('libgettextpo', exact=True ) }}
+    test:
+      commands:
+        {% set lib_idents = [ "gettextlib", "gettextpo", "gettextsrc" ] %}
+        {% set lib_idents = lib_idents + [ "intl" ] %}                         # [not linux]
+        {% for lib_ident in lib_idents %}
+        - test -f ${PREFIX}/lib/lib{{ lib_ident }}$SHLIB_EXT
+        - test ! -f ${PREFIX}/lib/lib{{ lib_ident }}.a
+        {% endfor %}
+    about:
+      home: https://www.gnu.org/software/gettext/
+      license: LGPL-2.1-or-later AND GPL-3.0-or-later
+      license_file: COPYING
+      summary: Internationalization package
+
+about:
+  home: https://www.gnu.org/software/gettext/
+  license: LGPL-2.1-or-later AND GPL-3.0-or-later
+  license_file: COPYING
+  summary: Internationalization package
+
+extra:
+  feedstock-name: gettext
+  recipe-maintainers:
+    - scopatz
+    - ocefpaf
+    - pkgw
+    - xhochy

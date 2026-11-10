@@ -1,0 +1,115 @@
+# This file created by conda-build 24.7.1
+# ------------------------------------------------
+
+package:
+  name: libthrift
+  version: 0.21.0
+source:
+  - patches: null
+    sha256: 9a24f3eba9a4ca493602226c16d8c228037db3b9291c6fc4019bfe3bd39fc67c
+    url: http://archive.apache.org/dist/thrift/0.21.0/thrift-0.21.0.tar.gz
+build:
+  number: 0
+  run_exports:
+    - libthrift >=0.21.0,<0.21.1.0a0
+  string: h64651cc_0
+requirements:
+  build:
+    - bzip2 1.0.8 hfdf4475_7
+    - c-ares 1.33.1 h44e7173_0
+    - ca-certificates 2024.8.30 h8857fd0_0
+    - cctools_osx-64 1010.6 h98e843e_1
+    - cctools_osx-arm64 1010.6 h7a13591_1
+    - clang 17.0.6 default_he371ed4_7
+    - clang-17 17.0.6 default_hb173f14_7
+    - clang_impl_osx-arm64 17.0.6 h840ab8d_19
+    - clang_osx-arm64 17.0.6 h40be2b1_19
+    - clangxx 17.0.6 default_he371ed4_7
+    - clangxx_impl_osx-arm64 17.0.6 ha3b5c75_19
+    - clangxx_osx-arm64 17.0.6 h40be2b1_19
+    - cmake 3.30.3 h7243fc2_0
+    - compiler-rt 17.0.6 h1020d70_2
+    - compiler-rt_osx-64 17.0.6 hf2b8a54_2
+    - icu 75.1 h120a0e1_0
+    - krb5 1.21.3 h37d8d59_0
+    - ld64_osx-64 951.9 h38c89e5_1
+    - ld64_osx-arm64 951.9 h2b3077e_1
+    - libclang-cpp17 17.0.6 default_hb173f14_7
+    - libcurl 8.10.1 h58e7537_0
+    - libcxx 19.1.0 hf95d169_0
+    - libcxx-devel 17.0.6 h8f8a49f_6
+    - libedit 3.1.20191231 h0678c8f_2
+    - libev 4.33 h10d778d_2
+    - libexpat 2.6.3 hac325c4_0
+    - libiconv 1.17 hd75f5a5_2
+    - libllvm17 17.0.6 hbedff68_1
+    - libnghttp2 1.58.0 h64cf6d3_1
+    - libssh2 1.11.0 hd019ec5_0
+    - libuv 1.48.0 h67532ce_0
+    - libxml2 2.12.7 heaf3512_4
+    - libzlib 1.3.1 h87427d6_1
+    - llvm-tools 17.0.6 hbedff68_1
+    - macosx_deployment_target_osx-arm64 11.0 h6553868_1
+    - ncurses 6.5 hf036a51_1
+    - ninja 1.12.1 h3c5361c_0
+    - openssl 3.3.2 hd23fc13_0
+    - rhash 1.4.4 h0dc2134_0
+    - sigtool 0.1.3 h88f4db0_0
+    - tapi 1300.6.5 h390ca13_0
+    - xz 5.2.6 h775f41a_0
+    - zstd 1.5.6 h915ae27_0
+  host:
+    - ca-certificates 2024.8.30 hf0a4a13_0
+    - libboost-headers 1.86.0 hce30654_2
+    - libcxx 19.1.0 ha82da77_0
+    - libevent 2.1.12 h2757513_1
+    - libzlib 1.3.1 hfb2fe0b_1
+    - openssl 3.3.2 h8359307_0
+    - zlib 1.3.1 hfb2fe0b_1
+  run:
+    - __osx >=11.0
+    - libcxx >=17
+    - libevent >=2.1.12,<2.1.13.0a0
+    - libzlib >=1.3.1,<2.0a0
+    - openssl >=3.3.2,<4.0a0
+test:
+  commands:
+    - test -f $PREFIX/lib/libthrift.dylib
+    - test ! -f $PREFIX/lib/libthrift.a
+    - test -f $PREFIX/lib/libthriftnb.dylib
+    - test ! -f $PREFIX/lib/libthriftnb.a
+    - test -f $PREFIX/lib/libthriftz.dylib
+    - test ! -f $PREFIX/lib/libthriftz.a
+    - test ! -f $PREFIX/bin/thrift
+    - test -f $PREFIX/include/thrift/Thrift.h
+    - pkg-config --print-errors --exact-version "0.21.0" thrift
+    - pkg-config --print-errors --exact-version "0.21.0" thrift-nb
+    - pkg-config --print-errors --exact-version "0.21.0" thrift-z
+    - cd cmake_test
+    - cmake -GNinja $CMAKE_ARGS .
+  files:
+    - cmake_test/
+  requires:
+    - clangxx_osx-arm64 17.*
+    - cmake
+    - ninja
+    - pkg-config
+about:
+  dev_url: https://github.com/apache/thrift
+  home: http://thrift.apache.org
+  license: Apache-2.0
+  license_file: LICENSE
+  summary: Compiler and C++ libraries and headers for the Apache Thrift RPC system
+extra:
+  copy_test_source_files: true
+  feedstock-name: thrift-cpp
+  final: true
+  flow_run_id: azure_20240924.1.1
+  recipe-maintainers:
+    - h-vetinari
+    - jakirkham
+    - msarahan
+    - wesm
+    - xhochy
+  remote_url: https://github.com/conda-forge/thrift-cpp-feedstock
+  sha: f39440838a6f0463312c5c93127fe890100a93d9

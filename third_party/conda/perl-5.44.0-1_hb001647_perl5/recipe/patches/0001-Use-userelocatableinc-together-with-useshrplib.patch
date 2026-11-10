@@ -1,0 +1,43 @@
+From a8d8528d5411ef6440d87a8d5ffe34f725c7c1d5 Mon Sep 17 00:00:00 2001
+From: Marcel Bargull <marcel.bargull@udo.edu>
+Date: Wed, 25 Nov 2020 08:01:19 +0100
+Subject: [PATCH 1/2] Use userelocatableinc together with useshrplib
+
+So we can build a relocatable shared library libperl.so.
+
+Since conda-build makes our rpaths relative with
+$ORIGIN/<relative-path>, the "hard-coded rpath ... cannot be relocated"
+doesn't really apply for us.
+
+Signed-off-by: Marcel Bargull <marcel.bargull@udo.edu>
+---
+ Configure | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/Configure b/Configure
+index fbc225822a..60d2068b9e 100755
+--- a/Configure
++++ b/Configure
+@@ -8712,13 +8712,6 @@ esac
+ 
+ case "$useshrplib" in
+ true)
+-	case "$userelocatableinc" in
+-	true|define)
+-		echo "Cannot build with both -Duserelocatableinc and -Duseshrplib" >&4
+-		echo "See INSTALL for an explanation why that won't work." >&4
+-		exit 4
+-		;;
+-	esac
+ 	case "$libperl" in
+ 	'')
+ 		# Figure out a good name for libperl.so.  Since it gets stored in
+@@ -8811,7 +8804,7 @@ esac
+ # Add $xxx to ccdlflags.
+ # If we can't figure out a command-line option, use $shrpenv to
+ # set env LD_RUN_PATH.  The main perl makefile uses this.
+-shrpdir=$archlibexp/CORE
++shrpdir="$( printf %s "$archlibexp/CORE" | sed "s|\.\.\.|${PREFIX}/bin|" )"
+ xxx=''
+ tmp_shrpenv=''
+ if "$useshrplib"; then

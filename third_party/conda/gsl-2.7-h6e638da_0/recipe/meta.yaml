@@ -1,0 +1,77 @@
+# This file created by conda-build 3.21.4
+# meta.yaml template originally from:
+# /Users/runner/work/1/s/recipe, last modified Thu Jul 15 17:10:16 2021
+# ------------------------------------------------
+
+package:
+  name: gsl
+  version: '2.7'
+source:
+  patches: null
+  sha256: efbbf3785da0e53038be7907500628b466152dbc3c173a87de1b5eba2e23602b
+  url: http://ftp.gnu.org/gnu/gsl/gsl-2.7.tar.gz
+build:
+  number: '0'
+  run_exports:
+    - gsl >=2.7,<2.8.0a0
+  string: h6e638da_0
+requirements:
+  build:
+    - autoconf 2.69 pl5320hbcb3906_10
+    - automake 1.16.2 pl5320h694c41f_3
+    - cctools_osx-64 949.0.1 h6407bdd_22
+    - cctools_osx-arm64 949.0.1 h55de48a_22
+    - clang 11.1.0 h694c41f_1
+    - clang-11 11.1.0 default_he082bbe_1
+    - clang_osx-arm64 11.1.0 h40be2b1_2
+    - clangxx 11.1.0 default_he082bbe_1
+    - compiler-rt 11.1.0 h654b07c_0
+    - compiler-rt_osx-64 11.1.0 h8c5fa43_0
+    - ld64_osx-64 530 he8994da_21
+    - ld64_osx-arm64 530 h3681fde_21
+    - ldid 2.1.2 h7660a38_2
+    - libclang-cpp11.1 11.1.0 default_he082bbe_1
+    - libcxx 12.0.1 habf9029_0
+    - libllvm11 11.1.0 hd011deb_2
+    - libllvm12 12.0.1 hd011deb_0
+    - libtool 2.4.6 h2e338ed_1007
+    - llvm-tools 11.1.0 hd011deb_2
+    - m4 1.4.18 haf1e3a3_1001
+    - make 4.3 h22f3db7_1
+    - perl 5.32.1 0_h0d85af4_perl5
+    - tapi 1100.0.11 h9ce4665_0
+    - zlib 1.2.11 h7795811_1010
+  host:
+    - libblas 3.9.0 5_h880f123_netlib
+    - libcblas 3.9.0 5_h880f123_netlib
+    - libgfortran 5.0.0.dev0 11_0_1_hf114ba7_22
+    - libgfortran5 11.0.1.dev0 hf114ba7_22
+    - llvm-openmp 12.0.1 hf3c4609_0
+  run:
+    - libblas >=3.9.0,<4.0a0
+    - libcblas >=3.9.0,<4.0a0
+test:
+  commands:
+    - gsl-config --prefix
+    - ls -al $PREFIX/lib/libgsl${SHLIB_EXT}
+    - ls -al $PREFIX/lib/libgslcblas${SHLIB_EXT}
+    - ls -al $PREFIX/lib/libgslcblas.0.dylib
+    - ls -al $PREFIX/lib/libgsl.*.dylib
+  files:
+    - test
+  requires:
+    - clang_osx-arm64 11.*
+about:
+  home: http://www.gnu.org/software/gsl/
+  license: GPL-3.0-or-later
+  license_file:
+    - COPYING
+  summary: GNU Scientific Library
+extra:
+  copy_test_source_files: true
+  final: true
+  recipe-maintainers:
+    - kwilcox
+    - mingwandroid
+    - ocefpaf
+    - traversaro

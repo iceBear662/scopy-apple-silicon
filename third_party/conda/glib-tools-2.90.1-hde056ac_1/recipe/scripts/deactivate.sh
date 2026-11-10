@@ -1,0 +1,6 @@
+export XDG_DATA_DIRS=${XDG_DATA_DIRS_CONDA_BACKUP:-}
+unset XDG_DATA_DIRS_CONDA_BACKUP
+if [ -z "$XDG_DATA_DIRS" ]; then
+    unset XDG_DATA_DIRS
+fi
+

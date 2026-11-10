@@ -1,0 +1,279 @@
+{% set version = "1.24.1" %}
+{% set posix = 'm2-' if win else '' %}
+
+package:
+  name: gstreamer_and_plugins
+  version: {{ version }}
+
+source:
+  - url: https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-{{ version }}.tar.xz
+    sha256: 88fc3629a8cacf7955d8671b2ae867d4a52a07b6948daa25b67feed22f8055ef
+  - url: https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-{{ version }}.tar.xz
+    sha256: 884045d1d7c5d6bb8605e45c7ee0e9f1341888e81c2b7c42dff52bb98ede8ec3
+    folder: plugins_base
+  - url: https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-{{ version }}.tar.xz
+    sha256: c02ba5583863e0bd9e265e5e4a27a03a3c473eb9ec1c10b07238f7176d9368a2
+    folder: plugins_good
+    patches:
+      - jpeg-win.patch  # [win]
+
+build:
+  number: 1
+
+outputs:
+  - name: gstreamer
+    script: install_gstreamer.sh  # [unix]
+    script: install_gstreamer.bat  # [win]
+    build:
+      activate_in_script: true
+      ignore_run_exports:
+        # we need cross-python to build, but this isn't a python package
+        - python      # [build_platform != target_platform]
+        - python_abi  # [build_platform != target_platform]
+      run_exports:
+        # remove symbols at .90 patch releases just before minor versions?
+        #    https://abi-laboratory.pro/tracker/timeline/gstreamer/
+        - {{ pin_subpackage('gstreamer', max_pin='x.x') }}
+
+    requirements:
+      build:
+        - sysroot_linux-64 2.17  # [linux64]
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - pkg-config
+        - {{ posix }}bison
+        - {{ posix }}flex
+        - meson
+        - ninja
+        - gobject-introspection
+        # 20221027 - hmaarrfk
+        # 3.11 doesn't have distutils which mesons needs???
+        - cross-python_{{ target_platform }} 3.10  # [build_platform != target_platform]
+      host:
+        - python 3.10  # [build_platform != target_platform]
+        - gettext
+        - glib
+        # 2024/03 Remove when the following is resolved
+        # https://github.com/conda-forge/glib-feedstock/issues/169
+        - glib !=2.80  # [win]
+        - libiconv
+      run:
+        - {{ pin_compatible("glib") }}  # required for anything that builds against GStreamer, e.g. Qt
+        - __osx >={{ MACOSX_DEPLOYMENT_TARGET|default("10.9") }}  # [osx and x86_64]
+    test:
+      commands:
+        - gst-inspect-1.0 --version
+        - gst-launch-1.0  --version
+        - gst-stats-1.0 --version
+        - gst-typefind-1.0 --version
+        - test -f $PREFIX/lib/girepository-1.0/Gst-1.0.typelib  # [unix]
+        - if not exist %LIBRARY_LIB%\\girepository-1.0\\Gst-1.0.typelib exit 1  # [win]
+    about:
+      summary: Library for constructing graphs of media-handling components
+      description:
+      doc_source_url: https://cgit.freedesktop.org/gstreamer/gstreamer/tree/docs
+      license: LGPL-2.0-or-later
+      license_file: COPYING
+
+  - name: gst-plugins-base
+    script: install_base_plugins.sh  # [unix]
+    script: install_base_plugins.bat  # [win]
+    build:
+      activate_in_script: true
+      ignore_run_exports:
+        # we need cross-python to build, but this isn't a python package
+        - python      # [build_platform != target_platform]
+        - python_abi  # [build_platform != target_platform]
+      run_exports:
+        # remove symbols at .90 patch releases just before minor versions?
+        #    https://abi-laboratory.pro/tracker/timeline/gstreamer/
+        - {{ pin_subpackage('gst-plugins-base', max_pin='x.x') }}
+
+    requirements:
+      build:
+        - sysroot_linux-64 2.17  # [linux64]
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - {{ cdt('mesa-libgl-devel') }}      # [linux]
+        - {{ cdt('libdrm-devel') }}          # [linux]
+        - {{ cdt('mesa-dri-drivers') }}      # [linux]
+        # These dependencies are only for cos7 platforms
+        - {{ cdt('libglvnd-glx') }}          # [linux & (ppc64le | aarch64)]
+        - {{ cdt('libglvnd') }}              # [linux & (ppc64le | aarch64)]
+        # - {{ cdt('libxshmfence-devel') }}    # [linux & (ppc64le | aarch64)]
+        - {{ cdt('mesa-khr-devel') }}        # [linux & (ppc64le | aarch64)]
+        - {{ cdt('libselinux-devel') }}      # [linux]
+        - pkg-config
+        - meson
+        - ninja
+        - gobject-introspection
+        - cross-python_{{ target_platform }} 3.10    # [build_platform != target_platform]
+      host:
+        - python 3.10  # [build_platform != target_platform]
+        - {{ pin_subpackage('gstreamer', exact=True) }}
+        # 2024/03 Remove when the following is resolved
+        # https://github.com/conda-forge/glib-feedstock/issues/169
+        - glib !=2.80  # [win]
+        - glib
+        - zlib
+        - gettext
+        - libogg
+        - libxcb                             # [linux]
+        - libpng                             # [unix]
+        - alsa-lib                           # [linux]
+        - libopus                            # [unix]
+        - libvorbis
+        - xorg-libxfixes                     # [linux]
+        - xorg-libxext                       # [linux]
+        - xorg-xproto                        # [linux]
+        - xorg-libx11                        # [linux]
+        - expat                              # [linux]
+        - xorg-libxrender                    # [linux]
+        - xorg-libxdamage                    # [linux]
+        - xorg-libxxf86vm                    # [linux]
+        - xorg-libxau                        # [linux]
+      run:
+        - {{ pin_subpackage('gstreamer', exact=True) }}
+
+    test:
+      commands:
+        - test -f $PREFIX/lib/libgstallocators-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/libgstapp-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/libgstaudio-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/libgstfft-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/libgstpbutils-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/libgstriff-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/libgstrtp-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/libgstrtsp-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/libgstsdp-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/libgsttag-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/libgstvideo-1.0${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/girepository-1.0/GstVideo-1.0.typelib  # [unix]
+        - if not exist %LIBRARY_BIN%\\gstallocators-1.0-0.dll exit 1  # [win]
+        - if not exist %LIBRARY_LIB%\\girepository-1.0\\GstVideo-1.0.typelib exit 1  # [win]
+        - gst-inspect-1.0 --plugin volume
+
+    about:
+      summary: GStreamer Base Plug-ins
+      description: |
+        GStreamer Base Plug-ins is a well-groomed and well-maintained collection of
+        GStreamer plug-ins and elements, spanning the range of possible types of
+        elements one would want to write for GStreamer.
+      doc_source_url: https://github.com/GStreamer/gst-plugins-base/tree/master/docs
+      license: LGPL-2.0-or-later
+      license_file: COPYING
+
+  - name: gst-plugins-good
+    script: install_good_plugins.sh  # [unix]
+    script: install_good_plugins.bat  # [win]
+    build:
+      activate_in_script: true
+      ignore_run_exports:
+        # we need cross-python to build, but this isn't a python package
+        - python      # [build_platform != target_platform]
+        - python_abi  # [build_platform != target_platform]
+      run_exports:
+        - {{ pin_subpackage('gst-plugins-good', max_pin='x.x') }}
+    requirements:
+      build:
+        - sysroot_linux-64 2.17  # [linux64]
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+        - {{ cdt('mesa-libgl-devel') }}      # [linux]
+        - {{ cdt('libdrm-devel') }}          # [linux]
+        - {{ cdt('mesa-dri-drivers') }}      # [linux]
+        # These dependencies are only for cos7 platforms
+        - {{ cdt('libglvnd-glx') }}          # [linux & (ppc64le | aarch64)]
+        - {{ cdt('libglvnd') }}              # [linux & (ppc64le | aarch64)]
+        # - {{ cdt('libxshmfence-devel') }}    # [linux & (ppc64le | aarch64)]
+        - {{ cdt('mesa-khr-devel') }}        # [linux & (ppc64le | aarch64)]
+        - {{ cdt('libselinux-devel') }}      # [linux]
+        # 20221027 - hmaarrfk - needs distutils, which was removed from 3.11
+        - cross-python_{{ target_platform }} 3.10    # [build_platform != target_platform]
+        - pkg-config
+        - meson
+        - ninja
+      host:
+        - python 3.10  # [build_platform != target_platform]
+        - {{ pin_subpackage('gstreamer', exact=True) }}
+        - {{ pin_subpackage('gst-plugins-base', exact=True) }}
+        - gettext
+        - openssl
+        - libxml2
+        # 2024/03 Remove when the following is resolved
+        # https://github.com/conda-forge/glib-feedstock/issues/169
+        - glib !=2.80  # [win]
+        - glib
+        - libxcb                             # [linux]
+        - jack >=1.9.7                       # [linux64]
+        - lame                               # [unix]
+        - pulseaudio-client                  # [linux]
+        - mpg123                             # [linux64 or osx]
+        - zlib
+        - libsoup                            # [not ppc64le]
+        - libjpeg-turbo
+        - libpng                             # [unix]
+        - bzip2                              # [linux]
+        - libxml2                            # [linux]
+        - xorg-libxfixes                     # [linux]
+        - xorg-libxext                       # [linux]
+        - xorg-xproto                        # [linux]
+        - xorg-libx11                        # [linux]
+        - expat                              # [linux]
+        - xorg-libxrender                    # [linux]
+        - xorg-libxdamage                    # [linux]
+        - xorg-libxxf86vm                    # [linux]
+        - xorg-libxau                        # [linux]
+      run:
+        - {{ pin_subpackage('gstreamer', exact=True) }}
+        - {{ pin_subpackage('gst-plugins-base', exact=True) }}
+        - libsoup                            # [not ppc64le]
+        - glib-networking                    # [not ppc64le]
+        - xorg-libxfixes                     # [linux]
+        - xorg-libxdamage                    # [linux]
+
+    test:
+      commands:
+        - test -f $PREFIX/lib/gstreamer-1.0/libgstalpha${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/gstreamer-1.0/libgstdebug${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/gstreamer-1.0/libgstjack${SHLIB_EXT}  # [linux64]
+        - test -f $PREFIX/lib/gstreamer-1.0/libgstjpeg${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/gstreamer-1.0/libgstlame${SHLIB_EXT}  # [unix]
+        - test -f $PREFIX/lib/gstreamer-1.0/libgstmpg123${SHLIB_EXT}  # [linux64 or osx]
+        - test -f $PREFIX/lib/gstreamer-1.0/libgstspectrum${SHLIB_EXT}  # [unix]
+        - test -f ${PREFIX}/lib/gstreamer-1.0/libgstpulseaudio${SHLIB_EXT}  # [linux]
+        - if not exist %LIBRARY_LIB%\\gstreamer-1.0\\gstalpha.dll exit 1  # [win]
+        - if not exist %LIBRARY_LIB%\\gstreamer-1.0\\gstdebug.dll exit 1  # [win]
+        - if not exist %LIBRARY_LIB%\\gstreamer-1.0\\gstjpeg.dll exit 1  # [win]
+        - if not exist %LIBRARY_LIB%\\gstreamer-1.0\\gstspectrum.dll exit 1  # [win]
+        - gst-inspect-1.0 --plugin alpha
+    about:
+      summary: GStreamer Good Plug-ins
+      description: |
+        GStreamer Good Plug-ins is A collection of plug-ins you'd
+        want to have right next to you on the battlefield.
+        Shooting sharp and making no mistakes, these plug-ins have it
+        all: good looks, good code, and good licensing.  Documented and
+        dressed up in tests.  If you're looking for a role model to
+        base your own plug-in on here it is.
+      doc_source_url: https://github.com/GStreamer/gst-plugins-good/tree/master/docs
+      license: LGPL-2.0-or-later
+      license_file: COPYING
+
+about:
+  home: https://gstreamer.freedesktop.org/
+  summary: Library for constructing graphs of media-handling components
+  license: LGPL-2.0-or-later
+  license_file: COPYING
+  doc_url: https://gstreamer.freedesktop.org/documentation/
+  dev_url: https://cgit.freedesktop.org/gstreamer/gstreamer/tree/
+
+extra:
+  recipe-maintainers:
+    - hmaarrfk
+    - andfoy
+    - ccordoba12
+    - mingwandroid
+    - msarahan
+    - tschoonj
+    - scopatz
