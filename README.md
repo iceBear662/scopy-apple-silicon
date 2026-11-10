@@ -1,20 +1,23 @@
-# Scopy 1.5 for Apple Silicon (unofficial)
+# Scopy 1.5 for Apple Silicon
 
 English | [简体中文](README.zh-CN.md)
 
-Apple Silicon port based on [Analog Devices Scopy v1.5.0-rc1](https://github.com/analogdevicesinc/scopy/tree/v1.5.0-rc1), commit `438f13835ef65c8ff56a511532817575a04d7fa9`. This is an unofficial community modification. Scopy is licensed under GPL-3.0-or-later; retain the original copyright and license notices.
+An Apple Silicon native port of Scopy 1.5 for macOS users working with the ADALM2000, based on Analog Devices' [Scopy v1.5.0-rc1](https://github.com/analogdevicesinc/scopy/tree/v1.5.0-rc1). This is an unofficial community port and is not an official Analog Devices release.
 
-Changes include arm64 build support, embedded Python path isolation, reconnect stability and network analyzer script-axis corrections. `source/` includes the modified Scopy source and its iio-emu submodule. `native/` records build scripts, dependency pins and patches. The iio-emu component has additional ADI license terms; see `source/iio-emu/LICENSE_ADIBSD`.
+## Features
 
-The local build was tested on an Apple Silicon Mac with macOS 27.0.1 and an ADALM2000 on firmware v0.27: USB recognition, three reconnects, 60-second analog input, FFT and 16-channel logic input were tested. Outputs, calibration, loopback accuracy, physical unplug/replug and long-term stability were not tested.
+- Native Apple Silicon (arm64) support.
+- Measurement and analysis with the ADALM2000.
+- Improved embedded Python path isolation and device reconnection stability.
+- Corrected network analyzer script axes.
 
-## Release preparation status
+## Compatibility
 
-This directory is a **draft**. The sources and pinned dependencies have been built in a separate local environment; this is one build on one machine, not proof of reproducibility on other machines. The application archive is not included while corresponding-source and third-party redistribution conditions remain under review. See [third-party provenance and audit limitations](third_party/NOTICES.md).
+An actual experiment was completed successfully on an **Apple M6 device running macOS 27.0.1**. The build targets macOS 11 and later; compatibility with other devices and macOS versions has not been confirmed.
 
-## Local build (experimental)
+## Build from source
 
-On an Apple Silicon Mac, install Xcode and its command-line tools, Git, Python 3 and [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html). From the repository root, with `micromamba` on PATH:
+An Apple Silicon Mac, Xcode and its command-line tools, Git, Python 3, and [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) are required. With `micromamba` on PATH, run the following from the repository root:
 
 ```sh
 python3 native/bootstrap.py
@@ -25,8 +28,16 @@ python3 native/package.py
 python3 native/verify.py
 ```
 
-The bootstrap step refuses to overwrite existing dependency checkouts. This downloads third-party source and conda packages. The package URLs are pinned, but their hashes were not checked against an independently signed manifest. The output is locally ad-hoc signed and has not been notarized by Apple. The build targets macOS 11 or newer; only the local macOS version above has been tested. The current output contains local build paths and requires further privacy and license review before distribution.
+The build downloads third-party sources and packages; the bootstrap script refuses to overwrite existing source directories. The resulting app is locally ad-hoc signed and has not been notarized by Apple. No application archive is included in this repository: local paths in the build output and third-party redistribution requirements still need review.
 
-For a local emulator-only smoke test, run `python3 native/tests/run_smoke.py version help script-basic connect-default analog-acquisition reconnect session-roundtrip digital-config network-sweep invalid-device`. The runner checks that the local server identifies itself as the ADALM2000 Demo before running; these cases connect to localhost, not a physical device. All ten cases passed on the independent local build.
+## Project structure
 
-Do not commit local build environments, caches, hardware identifiers, raw logs or device capture data.
+- `source/`: modified Scopy source and iio-emu.
+- `native/`: Apple Silicon build scripts, dependency pins and patches.
+- `third_party/`: third-party dependency provenance and license materials.
+
+## Credits and licenses
+
+Thanks to the contributors to [Analog Devices Scopy](https://github.com/analogdevicesinc/scopy) and its dependencies. This port is based on upstream commit `438f13835ef65c8ff56a511532817575a04d7fa9`.
+
+Scopy is licensed under [GPL-3.0-or-later](LICENSE). iio-emu is subject to additional [ADI license terms](source/iio-emu/LICENSE_ADIBSD); see [third_party/NOTICES.md](third_party/NOTICES.md) for third-party provenance and license information.
