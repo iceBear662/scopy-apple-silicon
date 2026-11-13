@@ -2,12 +2,33 @@
 
 English | [简体中文](README.md)
 
+<img src="source/resources/Scopy.png" alt="Scopy icon" width="88">
+
+![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-arm64-blue)
+![macOS](https://img.shields.io/badge/build%20target-macOS%2011%2B-lightgrey)
+![Scopy](https://img.shields.io/badge/Scopy-v1.5.0--rc1-orange)
+
 An Apple Silicon native port of Scopy 1.5 for macOS users working with the ADALM2000, based on Analog Devices' [Scopy v1.5.0-rc1](https://github.com/analogdevicesinc/scopy/tree/v1.5.0-rc1). This is an unofficial community port and is not an official Analog Devices release.
+
+## Quick start
+
+1. Download `Scopy-v1.5.0-rc1-macOS-arm64.zip` from [Releases](../../releases/latest).
+2. Unzip it and drag `Scopy-arm64.app` to Applications.
+3. Open Scopy from Applications and connect your ADALM2000.
+
+The app is ad-hoc signed and is not notarized by Apple. macOS may warn that the developer cannot be verified; after confirming the download source, follow the instructions in System Settings → Privacy & Security to allow it to open.
+
+## Interface preview
+
+![Scopy power supply interface with Chinese instrument names](docs/images/scopy-chinese-interface.jpg)
+
+*Scopy's power supply interface, with instrument names shown in Chinese.*
 
 ## Features
 
 - Native Apple Silicon (arm64) support.
 - Measurement and analysis with the ADALM2000.
+- Chinese interface support, including translated instrument names; some text may remain in English.
 - Improved embedded Python path isolation and device reconnection stability.
 - Corrected network analyzer script axes.
 
@@ -19,13 +40,9 @@ This port adapts Scopy 1.5's source, build configuration and dependencies for ma
 
 An actual experiment was completed successfully on an **Apple M6 device running macOS 27.0.1**. The build targets macOS 11 and later; compatibility with other devices and macOS versions has not been confirmed.
 
-## Installation
+## Feedback
 
-1. Download `Scopy-v1.5.0-rc1-macOS-arm64.zip` from [Releases](../../releases/latest).
-2. Unzip it and drag `Scopy-arm64.app` to Applications.
-3. Open Scopy from Applications and connect your ADALM2000.
-
-The app is ad-hoc signed and is not notarized by Apple. macOS may warn that the developer cannot be verified; after confirming the download source, follow the instructions in System Settings → Privacy & Security to allow it to open.
+For problems or compatibility reports, please open an [issue](../../issues) with your Mac model, chip, macOS version, device connection and steps to reproduce.
 
 ## Build from source
 

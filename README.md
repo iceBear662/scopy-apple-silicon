@@ -2,12 +2,33 @@
 
 简体中文 | [English](README.en.md)
 
+<img src="source/resources/Scopy.png" alt="Scopy 图标" width="88">
+
+![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-arm64-blue)
+![macOS](https://img.shields.io/badge/build%20target-macOS%2011%2B-lightgrey)
+![Scopy](https://img.shields.io/badge/Scopy-v1.5.0--rc1-orange)
+
 Scopy 1.5 的 Apple Silicon 原生移植版，基于 Analog Devices 的 [Scopy v1.5.0-rc1](https://github.com/analogdevicesinc/scopy/tree/v1.5.0-rc1)，适用于使用 ADALM2000 的 macOS 用户。本项目是非官方社区移植，与 Analog Devices 官方发布版本无关。
+
+## 快速开始
+
+1. 在 [Releases](../../releases/latest) 下载 `Scopy-v1.5.0-rc1-macOS-arm64.zip`。
+2. 双击解压，将 `Scopy-arm64.app` 拖入“应用程序”文件夹。
+3. 在“应用程序”中打开 Scopy，连接 ADALM2000 后使用。
+
+应用使用临时签名，未经 Apple 公证；首次打开时 macOS 可能提示无法验证开发者。请在确认下载来源后，根据 macOS 的提示在“系统设置 → 隐私与安全性”中允许打开。
+
+## 界面预览
+
+![Scopy 中文仪表列表和电源界面](docs/images/scopy-chinese-interface.jpg)
+
+*Scopy 运行界面：左侧显示中文仪表名称，图中为电源界面。*
 
 ## 特性
 
 - 原生支持 Apple Silicon（arm64）。
 - 支持使用 ADALM2000 进行测量与分析。
+- 支持中文界面，示波器、频谱分析仪、网络分析仪和信号发生器等仪表名称已汉化；部分文字仍可能显示英文。
 - 改进内嵌 Python 的路径隔离与设备重连稳定性。
 - 修正网络分析仪脚本的坐标轴问题。
 
@@ -19,13 +40,9 @@ Scopy 1.5 的 Apple Silicon 原生移植版，基于 Analog Devices 的 [Scopy v
 
 已在搭载 **Apple M6 芯片、运行 macOS 27.0.1** 的设备上完成一次实际实验，测试通过。构建目标为 macOS 11 及以上；其他设备和系统版本的兼容性尚未确认。
 
-## 下载安装
+## 反馈
 
-1. 在 [Releases](../../releases/latest) 下载 `Scopy-v1.5.0-rc1-macOS-arm64.zip`。
-2. 双击解压，将 `Scopy-arm64.app` 拖入“应用程序”文件夹。
-3. 在“应用程序”中打开 Scopy，连接 ADALM2000 后使用。
-
-应用使用临时签名，未经 Apple 公证；首次打开时 macOS 可能提示无法验证开发者。请在确认下载来源后，根据 macOS 的提示在“系统设置 → 隐私与安全性”中允许打开。
+遇到问题或希望分享兼容性结果，欢迎在 [Issues](../../issues) 中提供 Mac 型号、芯片、macOS 版本、设备连接方式和复现步骤。
 
 ## 从源码构建
 
